@@ -29,7 +29,7 @@ public:
   int16_t getCachedResultNumByID(eAlgorithm_t algo, uint8_t id);
   Result *getCachedIndexResultByID(eAlgorithm_t algo, uint8_t id,
                                    uint8_t index);
-  int16_t getCachedResultMaxID(void);
+  int16_t getCachedResultMaxID(eAlgorithm_t algo);
 
   Result *getCurrentBranch(eAlgorithm_t algo);
   int8_t getUpcomingBranchCount(eAlgorithm_t algo);

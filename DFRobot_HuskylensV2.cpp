@@ -235,7 +235,7 @@ Result *HuskylensV2::getCachedIndexResultByID(eAlgorithm_t algo, uint8_t id,
   return rlt;
 }
 
-int16_t HuskylensV2::getCachedResultMaxID(void) { return maxID; }
+int16_t HuskylensV2::getCachedResultMaxID(eAlgorithm_t algo) { return maxID; }
 
 
 Result *HuskylensV2::getCurrentBranch(eAlgorithm_t algo){
