@@ -38,7 +38,6 @@ COMMAND_SET_ALGORITHM = 0x30
 COMMAND_SET_NAME_BY_ID = 0x31
 COMMAND_SET_MULTI_ALGORITHM = 0x32
 COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x33
-COMMAND_SET_LEARN_BLOCK_POSITION = 0x34
 
 # RFU 0x35 - 0x3F
 COMMAND_RETURN_OK = 0x40
@@ -60,6 +59,8 @@ COMMAND_ACTION_CLEAN_RECT = 0x57
 COMMAND_ACTION_DRAW_TEXT = 0x58
 COMMAND_ACTION_CLEAR_TEXT = 0x59
 COMMAND_ACTION_PLAY_MUSIC = 0x5A
+COMMAND_ACTION_EXIT = 0x5B
+COMMAND_ACTION_LEARN_BLOCK = 0x5C
 
 ALGORITHM_ANY = 0
 ALGORITHM_FACE_RECOGNITION = 1
@@ -523,8 +524,8 @@ class ProtocolV2(object):
         self._write_to_huskyLens(self.send_buffer[0, self.send_index])
         return self.wait(COMMAND_RETURN_OK)
     '''
-    def setLearningRectPosition(self, algo, x1,  y1, x2,  y2):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_SET_LEARN_BLOCK_POSITION);
+    def learnBlock(self, algo, x1,  y1, x2,  y2):
+        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN_BLOCK);
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_int16(x1)
@@ -537,13 +538,13 @@ class ProtocolV2(object):
     
     def switchAlgorithm(self,algo):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
-        self.husky_lens_protocol_write_uint8(algo);
-        self.husky_lens_protocol_write_uint8(0);
-        self.husky_lens_protocol_write_int16(0);
-        self.husky_lens_protocol_write_int16(0);
-        self.husky_lens_protocol_write_int16(0);
-        self.husky_lens_protocol_write_int16(0);
-        self.husky_lens_protocol_write_end();
+        self.husky_lens_protocol_write_uint8(algo)
+        self.husky_lens_protocol_write_uint8(0)
+        self.husky_lens_protocol_write_int16(0)
+        self.husky_lens_protocol_write_int16(0)
+        self.husky_lens_protocol_write_int16(0)
+        self.husky_lens_protocol_write_int16(0)
+        self.husky_lens_protocol_write_end()
       
         return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
 

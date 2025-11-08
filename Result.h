@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <Stream.h>
-#if 0
+#if 1
 #define DBG(x)                                                                 \
   do {                                                                         \
     Serial.print(__FUNCTION__);                                                \
@@ -95,7 +95,6 @@ enum protocolCommand {
   COMMAND_SET_NAME_BY_ID = 0x31,
   COMMAND_SET_MULTI_ALGORITHM = 0x32,
   COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x33,
-  COMMAND_SET_LEARN_BLOCK_POSITION = 0x34,
   // RFU 0x35 - 0x3F
 
   COMMAND_RETURN_OK = 0x40,
@@ -119,6 +118,9 @@ enum protocolCommand {
   COMMAND_ACTION_DRAW_TEXT = 0x58,
   COMMAND_ACTION_CLEAR_TEXT = 0x59,
   COMMAND_ACTION_PLAY_MUSIC = 0x5A,
+  COMMAND_ACTION_EXIT = 0x5B,
+  COMMAND_ACTION_LEARN_BLOCK = 0x5C,
+  COMMAND_ACTION_DRAW_UNIQUE_RECT = 0x5D,
 };
 
 typedef enum {
@@ -205,6 +207,7 @@ typedef struct __attribute__((packed))  {
   union {
     int8_t ID;
     int8_t maxID;
+    int8_t colorID;
     int8_t rfu0;
     int8_t boardType;
     int8_t totalSensors;
@@ -213,6 +216,7 @@ typedef struct __attribute__((packed))  {
   union {
     int8_t rfu1;
     int8_t level;
+    int8_t lineWidth;
     int8_t confidence;
     int8_t currSensorIndex;
   };

@@ -54,7 +54,7 @@ void loop() {
   int x2 = handResult->thumb_tip_x;
   int y2 = handResult->thumb_tip_y;
   huskylens.setMultiAlgorithmRatio(1, 0, 0);
-  huskylens.setLearningRectPosition(ALGORITHM_OBJECT_RECOGNITION, x1, y1, x2,
+  huskylens.learnBlock(ALGORITHM_OBJECT_RECOGNITION, x1, y1, x2,
                                     y2);
   while (1) {
     if (!huskylens.getResult(ALGORITHM_OBJECT_RECOGNITION)) {

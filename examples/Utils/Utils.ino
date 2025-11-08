@@ -41,11 +41,11 @@ void setup() {
 void loop() {
     huskylens.clearText(ALGORITHM_OBJECT_RECOGNITION);
     delay(2000);
-    huskylens.drawText(ALGORITHM_OBJECT_RECOGNITION, 0, 10, 10, "DFRobot Test");
+    huskylens.drawText(ALGORITHM_OBJECT_RECOGNITION, HuskylensV2::COLOR_RED, 10, 10, "DFRobot Test");
     delay(2000);
     huskylens.clearRect(ALGORITHM_OBJECT_RECOGNITION);
     delay(2000);
-    huskylens.drawRect(ALGORITHM_OBJECT_RECOGNITION, 0, 10, 10, 200, 30);
+    huskylens.drawRect(ALGORITHM_OBJECT_RECOGNITION, HuskylensV2::COLOR_GREEN, 10, 10, 200, 30);
     delay(2000);
     huskylens.learn(ALGORITHM_OBJECT_RECOGNITION);
     delay(2000);

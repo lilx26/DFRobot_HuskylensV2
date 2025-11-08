@@ -20,18 +20,22 @@ public:
   PacketData_t getInfo(eAlgorithm_t algo);
   int8_t getResult(eAlgorithm_t algo);
   int8_t getResultByID(eAlgorithm_t algo);
-  bool setLearningRectPosition(eAlgorithm_t algo, int16_t x1, int16_t y1,
+  bool learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1,
                                int16_t x2, int16_t y2);
   bool switchAlgorithm(eAlgorithm_t algo);
   bool takePhoto(eAlgorithm_t algo);
   bool takeScreenshot(eAlgorithm_t algo);
   bool learn(eAlgorithm_t algo);
   bool forgot(eAlgorithm_t algo);
-  bool drawRect(eAlgorithm_t algo, uint8_t colorID, int16_t x1, int16_t y1,
+  bool drawUniqueRect(eAlgorithm_t algo, uint8_t colorID,uint8_t lineWidth, int16_t x1, int16_t y1,
+                int16_t x2, int16_t y2);
+  bool drawRect(eAlgorithm_t algo, uint8_t colorID,uint8_t lineWidth, int16_t x1, int16_t y1,
                 int16_t x2, int16_t y2);
   bool clearRect(eAlgorithm_t algo);
-  bool drawText(eAlgorithm_t algo, uint8_t colorID, int16_t x, int16_t y,
-                String text);
+  bool drawText(eAlgorithm_t algo, uint8_t colorID,uint8_t fontSize, int16_t x,
+                          int16_t y, String text);
+  bool drawText(eAlgorithm_t algo, uint8_t colorID,uint8_t bgColorID,uint8_t fontSize, int16_t x,
+                int16_t y, String text);
   bool clearText(eAlgorithm_t algo);
   bool saveKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
   bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
