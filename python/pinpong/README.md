@@ -53,7 +53,7 @@ def switchAlgorithm(self, algo):
 @fn getResult
 @brief Get recognition result from HuskyLens V2
 @params algo：Huskylens built-in algorithms. For algorithm details, please refer to the table below.
-@return COMMAND_RETURN_OK
+@return COMMAND_RETURN_ARGS
 '''
 def getResult(self, algo):
 

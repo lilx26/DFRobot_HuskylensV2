@@ -237,8 +237,7 @@ Result *HuskylensV2::getCachedIndexResultByID(eAlgorithm_t algo, uint8_t id,
 
 int16_t HuskylensV2::getCachedResultMaxID(eAlgorithm_t algo) { return maxID; }
 
-
-Result *HuskylensV2::getCurrentBranch(eAlgorithm_t algo){
+Result *HuskylensV2::getCurrentBranch(eAlgorithm_t algo) {
   DBG("\n");
   Result *rlt = NULL;
 #ifdef LARGE_MEMORY
@@ -246,28 +245,28 @@ Result *HuskylensV2::getCurrentBranch(eAlgorithm_t algo){
 #else
   algo = (eAlgorithm_t)0;
 #endif
-  if (result[algo][0] && (result[algo][0]->level==1)) {
+  if (result[algo][0] && (result[algo][0]->level == 1)) {
     return result[algo][0];
   }
 }
 
-int8_t HuskylensV2::getUpcomingBranchCount(eAlgorithm_t algo){
+int8_t HuskylensV2::getUpcomingBranchCount(eAlgorithm_t algo) {
   DBG("\n");
-  int8_t count  = 0;
+  int8_t count = 0;
 #ifdef LARGE_MEMORY
   algo = toRealID(algo);
 #else
   algo = (eAlgorithm_t)0;
 #endif
-   for (uint8_t i = 0; i < MAX_RESULT_NUM; i++) {
+  for (uint8_t i = 0; i < MAX_RESULT_NUM; i++) {
     if (result[algo][i]) {
       count++;
     }
   }
-  return count>0 ? count-1 : 0;
+  return count > 0 ? count - 1 : 0;
 }
 
-Result *HuskylensV2::getBranch(eAlgorithm_t algo , int16_t index){
+Result *HuskylensV2::getBranch(eAlgorithm_t algo, int16_t index) {
   DBG("\n");
   Result *rlt = NULL;
   index++;
@@ -276,9 +275,9 @@ Result *HuskylensV2::getBranch(eAlgorithm_t algo , int16_t index){
 #else
   algo = (eAlgorithm_t)0;
 #endif
-   for (uint8_t i = 1; i < MAX_RESULT_NUM; i++) {
+  for (uint8_t i = 1; i < MAX_RESULT_NUM; i++) {
     if (result[algo][i]) {
-      if(i == index){
+      if (i == index) {
         rlt = result[algo][i];
         break;
       }
@@ -289,8 +288,7 @@ Result *HuskylensV2::getBranch(eAlgorithm_t algo , int16_t index){
 
 #ifdef LARGE_MEMORY
 bool HuskylensV2::setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1,
-                                    eAlgorithm_t algo2, eAlgorithm_t algo3,
-                                    eAlgorithm_t algo4) {
+                                    eAlgorithm_t algo2) {
   DBG("\n");
   customAlgoNum = 0;
   memset(customId, 0, sizeof(customId));
@@ -303,12 +301,7 @@ bool HuskylensV2::setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1,
   if (algo2 >= ALGORITHM_CUSTOM_BEGIN) {
     customId[customAlgoNum++] = algo2;
   }
-  if (algo3 >= ALGORITHM_CUSTOM_BEGIN) {
-    customId[customAlgoNum++] = algo3;
-  }
-  if (algo4 >= ALGORITHM_CUSTOM_BEGIN) {
-    customId[customAlgoNum++] = algo4;
-  }
-  return doSetMultiAlgorithm(algo0, algo1, algo2, algo3, algo4);
+
+  return doSetMultiAlgorithm(algo0, algo1, algo2);
 }
 #endif

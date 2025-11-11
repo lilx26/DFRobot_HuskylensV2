@@ -23,38 +23,43 @@
 
 // HUSKYLENS green line >> SDA; blue line >> SCL
 HuskylensV2 huskylens;
-#define RX_PIN_P0 1
-#define TX_PIN_P1 2
 
 void setup() {
-    Serial.begin(115200);
-    Serial1.begin(115200, SERIAL_8N1, RX_PIN_P0, TX_PIN_P1);
-    while (!huskylens.begin(Serial1)) {
-        Serial.println(F("Begin failed!"));
-        Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (System Settings>>Protocol Type>> I2C/UART)"));
-        Serial.println(F("2.Please recheck the connection."));
-        Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
-        delay(100);
-    }
+  Serial.begin(115200);
+  Wire.begin();
+  while (!huskylens.begin(Wire)) {
+    Serial.println(F("Begin failed!"));
+    Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS "
+                     "(System Settings>>Protocol Type>> I2C/UART)"));
+    Serial.println(F("2.Please recheck the connection."));
+    Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
+    delay(100);
+  }
 }
 
 void loop() {
-    huskylens.clearText(ALGORITHM_OBJECT_RECOGNITION);
-    delay(2000);
-    huskylens.drawText(ALGORITHM_OBJECT_RECOGNITION, HuskylensV2::COLOR_RED, 10, 10, "DFRobot Test");
-    delay(2000);
-    huskylens.clearRect(ALGORITHM_OBJECT_RECOGNITION);
-    delay(2000);
-    huskylens.drawRect(ALGORITHM_OBJECT_RECOGNITION, HuskylensV2::COLOR_GREEN, 10, 10, 200, 30);
-    delay(2000);
-    huskylens.learn(ALGORITHM_OBJECT_RECOGNITION);
-    delay(2000);
-    huskylens.forgot(ALGORITHM_OBJECT_RECOGNITION);
-    delay(2000);
-    huskylens.saveKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-    delay(2000);
-    huskylens.loadKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-    delay(2000);
-    huskylens.playMusic("test.mp3", 100);
-    delay(2000);
+  huskylens.clearText(ALGORITHM_OBJECT_RECOGNITION);
+  delay(2000);
+  huskylens.drawText(ALGORITHM_OBJECT_RECOGNITION, COLOR_RED, 20, 10, 10,
+                     "DFRobot Test");
+  delay(2000);
+  huskylens.clearRect(ALGORITHM_OBJECT_RECOGNITION);
+  delay(2000);
+  huskylens.drawRect(ALGORITHM_OBJECT_RECOGNITION, COLOR_GREEN, 4, 10, 10, 200,
+                     30);
+  delay(2000);
+  huskylens.learn(ALGORITHM_OBJECT_RECOGNITION);
+  delay(2000);
+  huskylens.forgot(ALGORITHM_OBJECT_RECOGNITION);
+  delay(2000);
+  huskylens.saveKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
+  delay(2000);
+  huskylens.loadKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
+  delay(2000);
+  huskylens.playMusic("abc.mp3", 100);
+  delay(2000);
+  for (int i = 0; i < 100; i++) {
+    huskylens.drawUniqueRect(ALGORITHM_OBJECT_RECOGNITION, COLOR_GREEN, 4, 10,
+                             10, 200, 30);
+  }
 }

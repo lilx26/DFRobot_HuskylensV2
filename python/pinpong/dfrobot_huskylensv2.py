@@ -40,12 +40,10 @@ COMMAND_SET_MULTI_ALGORITHM = 0x32
 COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x33
 
 # RFU 0x35 - 0x3F
-COMMAND_RETURN_OK = 0x40
-COMMAND_RETURN_ERROR = 0x41
-COMMAND_RETURN_INFO = 0x42
-COMMAND_RETURN_BLOCK = 0x43
-COMMAND_RETURN_ARROW = 0x44
-COMMAND_RETURN_SENSOR_LIST = 0x45
+COMMAND_RETURN_ARGS = 0x40
+COMMAND_RETURN_INFO = 0x41
+COMMAND_RETURN_BLOCK = 0x42
+COMMAND_RETURN_ARROW = 0x43
 
 # RFU 0x46 - 0x4F
 COMMAND_ACTION_TAKE_PHOTO = 0x50
@@ -376,7 +374,7 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_end()
-        if self.executeCommand(wait_cmd=COMMAND_RETURN_OK) == False:
+        if self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS) == False:
             return False
         return True
 
@@ -515,15 +513,6 @@ class ProtocolV2(object):
             cs = cs + self.send_buffer[i]
         self.send_buffer[self.send_index] = cs & 0xFF
         self.send_index = self.send_index + 1
-
-    '''
-    def getResultByID(self, algo, ID):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_GET_RESULT)
-        self.husky_lens_protocol_write_end()
-        
-        self._write_to_huskyLens(self.send_buffer[0, self.send_index])
-        return self.wait(COMMAND_RETURN_OK)
-    '''
     def learnBlock(self, algo, x1,  y1, x2,  y2):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN_BLOCK);
         self.husky_lens_protocol_write_uint8(0)

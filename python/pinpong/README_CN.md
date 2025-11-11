@@ -53,7 +53,7 @@ def switchAlgorithm(self, algo):
 @fn getResult
 @brief 获取二哈识图V2的识别结果。
 @params algo：二哈识图内置算法。有关算法的详细信息，请参阅算法章节。
-@return COMMAND_RETURN_OK
+@return COMMAND_RETURN_ARGS
 '''
 def getResult(self, algo):
 

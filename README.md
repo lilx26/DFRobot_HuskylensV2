@@ -71,7 +71,7 @@ bool switchAlgorithm(eAlgorithm_t algo);
  * @fn getResult
  * @brief Get recognition results from HuskyLens V2
  * @param algo The algorithm to get results for
- * @return COMMAND_RETURN_OK if successful, other values indicate errors
+ * @return COMMAND_RETURN_ARGS retValue==0 if successful, other values indicate errors
  */
 int8_t getResult(eAlgorithm_t algo);
 

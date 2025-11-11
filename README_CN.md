@@ -23,7 +23,7 @@
 2. 解压zip文件
 3. 将解压后的文件夹移动到您的Arduino库目录
 4. 重启Arduino IDE
-5. 在您的草图中包含库：`#include <DFRobot_HuskylensV2.h>`
+5. 在您的ino文件中包含库：`#include <DFRobot_HuskylensV2.h>`
 
 或者，您也可以通过Arduino库管理器搜索"DFRobot_HuskylensV2"来安装此库。
 
@@ -61,7 +61,7 @@ bool knock(void);
 ```cpp
 /**
  * @fn switchAlgorithm
- * @brief 切换二哈识图V2的内置算法
+ * @brief 切换二哈识图V2的算法，如果是自己安装的算法，请到目标算法UI的菜单中中找到Algo ID
  * @param algo 要切换的算法
  * @return 算法切换成功返回true，否则返回false
  */
@@ -71,7 +71,7 @@ bool switchAlgorithm(eAlgorithm_t algo);
  * @fn getResult
  * @brief 获取二哈识图V2的识别结果
  * @param algo 要获取结果的算法
- * @return 成功返回COMMAND_RETURN_OK，其他值表示错误
+ * @return 成功返回COMMAND_RETURN_ARGS，retValue==0，其他值表示错误
  */
 int8_t getResult(eAlgorithm_t algo);
 
@@ -97,7 +97,7 @@ Result *popCachedResult(eAlgorithm_t algo);
 
 /**
  * @fn getCachedCenterResult
- * @brief 获取最接近摄像头中心的结果
+ * @brief 获取最接近屏幕中心的结果
  * @param algo 要获取结果的算法
  * @return 指向中心结果的指针，如果没有可用结果则返回NULL
  */
@@ -206,6 +206,21 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
 bool drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 /**
+ * @fn drawRect
+ * @brief 在二哈识图显示屏上唯一矩形，执行这个函数时，之前绘制的矩形会被自动擦除
+ * @param algo 算法上下文
+ * @param colorID 矩形的颜色ID
+ * @param lineWidth 矩形的线宽
+ * @param x1 左上角的x坐标
+ * @param y1 左上角的y坐标
+ * @param x2 右下角的x坐标
+ * @param y2 右下角的y坐标
+ * @return 绘制成功返回true，否则返回false
+ */
+bool drawUniqueRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+
+
+/**
  * @fn drawText
  * @brief 在二哈识图显示屏上绘制文本
  * @param algo 算法上下文
@@ -241,9 +256,19 @@ bool clearText(eAlgorithm_t algo);
 /**
  * @fn setMultiAlgorithm
  * @brief 设置多个算法同时运行（仅适用于大内存开发板）
- * @param algo0 第一个算法
- * @param algo1 第二个算法
- * @param algo2 第三个算法（默认：ALGORITHM_ANY）
+ * @param algo0 第一个算法id
+ * @param algo1 第二个算法id
+ * @param algo2 第三个算法id（默认：ALGORITHM_ANY）
+ * @return 设置成功返回true，否则返回false
+ */
+bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo2 = ALGORITHM_ANY);
+
+/**
+ * @fn setMultiAlgorithmRatio
+ * @brief 设置多个算法同时运行（仅适用于大内存开发板）
+ * @param ratio0 第一个算法时间占用比
+ * @param ratio1 第二个算法时间占用比
+ * @param ratio2 第三个算法时间占用比（默认：ALGORITHM_ANY）
  * @return 设置成功返回true，否则返回false
  */
 bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo2 = ALGORITHM_ANY);

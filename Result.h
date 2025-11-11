@@ -97,12 +97,10 @@ enum protocolCommand {
   COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x33,
   // RFU 0x35 - 0x3F
 
-  COMMAND_RETURN_OK = 0x40,
-  COMMAND_RETURN_ERROR = 0x41,
-  COMMAND_RETURN_INFO = 0x42,
-  COMMAND_RETURN_BLOCK = 0x43,
-  COMMAND_RETURN_ARROW = 0x44,
-  COMMAND_RETURN_SENSOR_LIST = 0x45,
+  COMMAND_RETURN_ARGS = 0x40, // OK ERROR
+  COMMAND_RETURN_INFO = 0x41,
+  COMMAND_RETURN_BLOCK = 0x42,
+  COMMAND_RETURN_ARROW = 0x43,
   // RFU 0x46 - 0x4F
 
   COMMAND_ACTION_TAKE_PHOTO = 0x50,
@@ -203,19 +201,20 @@ typedef struct __attribute__((packed)) {
   }
 } String_t;
 
-typedef struct __attribute__((packed))  {
+typedef struct __attribute__((packed)) {
   union {
-    int8_t ID;
-    int8_t maxID;
-    int8_t colorID;
-    int8_t rfu0;
-    int8_t boardType;
-    int8_t totalSensors;
-    int8_t multiAlgoNum;
+    uint8_t ID;
+    uint8_t maxID;
+    uint8_t colorID;
+    uint8_t rfu0;
+    uint8_t boardType;
+    uint8_t totalSensors;
+    uint8_t multiAlgoNum;
   };
   union {
     int8_t rfu1;
     int8_t level;
+    int8_t retValue;
     int8_t lineWidth;
     int8_t confidence;
     int8_t currSensorIndex;
