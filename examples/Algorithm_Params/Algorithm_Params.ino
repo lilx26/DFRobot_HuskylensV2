@@ -38,29 +38,13 @@ void setup() {
 }
 
 void loop() {
-  huskylens.clearText(ALGORITHM_OBJECT_RECOGNITION);
-  delay(2000);
-  huskylens.drawText(ALGORITHM_OBJECT_RECOGNITION, COLOR_RED, 20, 10, 10,
-                     "DFRobot Test");
-  delay(2000);
-  huskylens.clearRect(ALGORITHM_OBJECT_RECOGNITION);
-  delay(2000);
-  huskylens.drawRect(ALGORITHM_OBJECT_RECOGNITION, COLOR_GREEN, 4, 10, 10, 200,
-                     30);
-  delay(2000);
-  huskylens.learn(ALGORITHM_OBJECT_RECOGNITION);
-  delay(2000);
-  huskylens.forgot(ALGORITHM_OBJECT_RECOGNITION);
-  delay(2000);
-  huskylens.saveKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-  delay(2000);
-  huskylens.loadKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-  delay(2000);
-  huskylens.playMusic("abc.mp3", 100);
-  delay(2000);
-  for (int i = 0; i < 150; i++) {
-    huskylens.drawUniqueRect(ALGORITHM_OBJECT_RECOGNITION, COLOR_GREEN, 4, 100,
-                             100, 102 + i * 2, 102 + i * 2);
-    delay(5);
-  }
+  bool ret =
+      huskylens.getAlgoParamBool(ALGORITHM_FACE_RECOGNITION, "show_name");
+  float det_thres =
+      huskylens.getAlgoParamFloat(ALGORITHM_FACE_RECOGNITION, "det_thres");
+  Serial.println(ret);
+  Serial.println(det_thres);
+
+  huskylens.setAlgoParamBool(ALGORITHM_FACE_RECOGNITION, "show_name", false);
+  huskylens.setAlgoParamFloat(ALGORITHM_FACE_RECOGNITION, "det_thres", 0.85);
 }

@@ -17,7 +17,6 @@ public:
   bool protocolAvailable();
   bool wait(uint8_t command = 0);
   bool knock(void);
-  PacketData_t getInfo(eAlgorithm_t algo);
   int8_t getResult(eAlgorithm_t algo);
   uint8_t learn(eAlgorithm_t algo);
   uint8_t learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1, int16_t x2,
@@ -47,6 +46,15 @@ public:
                            eAlgorithm_t algo2 = ALGORITHM_ANY);
   bool setMultiAlgorithmRatio(int8_t ratio0, int8_t ratio1, int8_t ratio2 = -1);
 #endif
+public:
+  bool getAlgoParamBool(eAlgorithm_t algo, String key);
+  float getAlgoParamFloat(eAlgorithm_t algo, String key);
+  String getAlgoParamString(eAlgorithm_t algo, String key);
+
+  bool setAlgoParamBool(eAlgorithm_t algo, String key, bool value);
+  bool setAlgoParamFloat(eAlgorithm_t algo, String key, float value);
+  bool setAlgoParamString(eAlgorithm_t algo, String key, String value);
+
 public:
   int16_t maxID;
   int16_t total_results;

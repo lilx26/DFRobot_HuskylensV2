@@ -56,6 +56,7 @@ public:
   bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1,
                          eAlgorithm_t algo2 = ALGORITHM_ANY);
 #endif
+
 public:
   Result *result[ALGORITHM_COUNT][MAX_RESULT_NUM];
 

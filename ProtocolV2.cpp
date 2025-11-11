@@ -272,30 +272,7 @@ bool ProtocolV2::switchAlgorithm(eAlgorithm_t algo) {
   }
   return ret;
 }
-// get info 获取统计信息
-PacketData_t ProtocolV2::getInfo(eAlgorithm_t algo) {
-  uint8_t *buffer = husky_lens_protocol_write_begin(algo, COMMAND_GET_INFO);
-  int length = husky_lens_protocol_write_end();
-  int ret = -1;
-  PacketData_t info;
-  memset(&info, 0, sizeof(PacketData_t));
-  for (int i = 0; i < retry; i++) {
-    protocolWrite(buffer, length);
-    if (wait(COMMAND_RETURN_INFO)) {
-      ret = 0;
-    }
-  }
-  if (ret == 0) {
-    PacketHead_t *head = (PacketHead_t *)receive_buffer;
-    PacketData_t *packet = (PacketData_t *)head->data;
 
-    info.total_results = packet->total_results;
-    info.total_results_learned = packet->total_results_learned;
-    info.total_blocks = packet->total_blocks;
-    info.total_blocks_learned = packet->total_blocks_learned;
-  }
-  return info;
-}
 // get result ,获取所有result，将统计信息保存heap中
 // 返回result的数目
 int8_t ProtocolV2::getResult(eAlgorithm_t algo) {
@@ -880,4 +857,198 @@ bool ProtocolV2::setNameByID(eAlgorithm_t algo, uint8_t id, String name) {
     }
   }
   return false;
+}
+
+bool ProtocolV2::getAlgoParamBool(eAlgorithm_t algo, String key) {
+  DBG("\n");
+  bool ret = false;
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
+  husky_lens_protocol_write_uint8(0);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        if (packet->first) {
+          ret = true;
+        }
+      }
+      return ret;
+    }
+  }
+  return false;
+}
+
+float ProtocolV2::getAlgoParamFloat(eAlgorithm_t algo, String key) {
+  DBG("\n");
+  float ret = 0.0;
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
+  husky_lens_protocol_write_uint8(0);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        memcpy(&ret, &packet->first, sizeof(ret));
+      }
+      return ret;
+    }
+  }
+  return 0.0;
+}
+
+String ProtocolV2::getAlgoParamString(eAlgorithm_t algo, String key) {
+  DBG("\n");
+  String ret = "";
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
+  husky_lens_protocol_write_uint8(0);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        String_t *value = (String_t *)packet->payload;
+        ret = value->toString();
+      }
+      return ret;
+    }
+  }
+  return ret;
+}
+
+bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
+  DBG("\n");
+  bool ret = false;
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
+  husky_lens_protocol_write_uint8(1);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(value);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        ret = true;
+      }
+      return ret;
+    }
+  }
+  return ret;
+}
+
+bool ProtocolV2::setAlgoParamFloat(eAlgorithm_t algo, String key, float value) {
+  DBG("\n");
+  bool ret = false;
+  int16_t *value16 = (int16_t *)&value;
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
+  husky_lens_protocol_write_uint8(2);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(value16[0]);
+  husky_lens_protocol_write_int16(value16[1]);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        ret = true;
+      }
+      return ret;
+    }
+  }
+  return ret;
+}
+
+bool ProtocolV2::setAlgoParamString(eAlgorithm_t algo, String key,
+                                    String value) {
+  DBG("\n");
+  bool ret = false;
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
+  husky_lens_protocol_write_uint8(0);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  husky_lens_protocol_write_uint8(value.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)value.c_str(),
+                                         value.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        ret = true;
+      }
+      return ret;
+    }
+  }
+  return ret;
 }
