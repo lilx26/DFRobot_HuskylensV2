@@ -95,6 +95,7 @@ Result *HuskylensV2::popCachedResult(eAlgorithm_t algo) {
 
   return NULL;
 }
+
 #ifdef LARGE_MEMORY
 eAlgorithm_t HuskylensV2::toRealID(uint8_t id) {
   eAlgorithm_t algo = ALGORITHM_ANY;
@@ -108,6 +109,7 @@ eAlgorithm_t HuskylensV2::toRealID(uint8_t id) {
   return algo;
 }
 #endif
+
 Result *HuskylensV2::getCachedCenterResult(eAlgorithm_t algo) {
   DBG("\n");
 #ifdef LARGE_MEMORY
@@ -284,6 +286,24 @@ Result *HuskylensV2::getBranch(eAlgorithm_t algo, int16_t index) {
     }
   }
   return rlt;
+}
+
+bool HuskylensV2::switchAlgorithm(eAlgorithm_t algo) {
+  DBG("\n");
+  bool ret;
+  customAlgoNum = 0;
+  customId[0] = 0;
+  customId[1] = 0;
+  customId[2] = 0;
+
+  ret = ProtocolV2::switchAlgorithm(algo);
+  if (ret) {
+    if (algo >= ALGORITHM_CUSTOM_BEGIN) {
+      customAlgoNum = 1;
+      customId[customAlgoNum++] = algo;
+    }
+  }
+  return ret;
 }
 
 #ifdef LARGE_MEMORY

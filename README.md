@@ -195,7 +195,7 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
  * @fn drawRect
  * @brief Draw a rectangle on the HuskyLens display
  * @param algo The algorithm context
- * @param colorID The color ID of the rectangle
+ * @param color The color  of the rectangle
  * @param lineWidth The line width of the rectangle
  * @param x1 The x-coordinate of the top-left corner
  * @param y1 The y-coordinate of the top-left corner
@@ -203,20 +203,20 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
  * @param y2 The y-coordinate of the bottom-right corner
  * @return true if drawing is successful, false otherwise
  */
-bool drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+bool drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
 
 /**
  * @fn drawText
  * @brief Draw text on the HuskyLens display
  * @param algo The algorithm context
- * @param colorID The color ID of the text
+ * @param color The color  of the text
  * @param fontSize The font size of the text
  * @param x The x-coordinate of the text position
  * @param y The y-coordinate of the text position
  * @param text The text to draw
  * @return true if drawing is successful, false otherwise
  */
-bool drawText(eAlgorithm_t algo, uint8_t colorID, uint8_t fontSize, int16_t x, int16_t y, String text);
+bool drawText(eAlgorithm_t algo, uint32_t color, uint8_t fontSize, int16_t x, int16_t y, String text);
 
 /**
  * @fn clearRect

@@ -53,7 +53,7 @@ COMMAND_ACTION_FORGOT = 0x53
 COMMAND_ACTION_SAVE_KNOWLEDGES = 0x54
 COMMAND_ACTION_LOAD_KNOWLEDGES = 0x55
 COMMAND_ACTION_DRAW_RECT = 0x56
-COMMAND_ACTION_CLEAN_RECT = 0x57
+COMMAND_ACTION_CLEAR_RECT = 0x57
 COMMAND_ACTION_DRAW_TEXT = 0x58
 COMMAND_ACTION_CLEAR_TEXT = 0x59
 COMMAND_ACTION_PLAY_MUSIC = 0x5A
@@ -523,7 +523,7 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(y2)
         self.husky_lens_protocol_write_end()
         
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
     
     def switchAlgorithm(self,algo):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
@@ -535,29 +535,29 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_end()
       
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def takePhoto(self):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_PHOTO)
         self.husky_lens_protocol_write_end()
       
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def takeScreenshot(self):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_SCREENSHOT)
         self.husky_lens_protocol_write_end()
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def learn(self,algo):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN)
         self.husky_lens_protocol_write_end()
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def forgot(self,algo):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_FORGOT)
         self.husky_lens_protocol_write_end()
 
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def drawRect(self, algo:int, color:int, x1:int, y1:int, x2:int, y2:int):
         color = self.rgb888_to_rgb565(color)
@@ -569,13 +569,13 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(y2)
         self.husky_lens_protocol_write_end();
       
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def clearRect(self, algo : int):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAN_RECT)
+        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAR_RECT)
         self.husky_lens_protocol_write_end()
 
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def drawText(self, algo : int, color : int, x : int, y : int, text : str):
         utf8_bytes = text.encode('utf-8')
@@ -594,13 +594,13 @@ class ProtocolV2(object):
           self.husky_lens_protocol_write_uint8(c)
         self.husky_lens_protocol_write_end();
 
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         
     def clearText(self, algo : int):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAR_TEXT);
         self.husky_lens_protocol_write_end()
         
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def saveKnowledges(self, algo : int, knowledgeID : int):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_SAVE_KNOWLEDGES);
@@ -613,7 +613,7 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_end()
 
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def loadKnowledges(self, algo : int, knowledgeID : int):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LOAD_KNOWLEDGES)
@@ -626,7 +626,7 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_end()
 
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def playMusic(self, name:str, volume:int):
         utf8_bytes = name.encode('utf-8')
@@ -643,7 +643,7 @@ class ProtocolV2(object):
             self.husky_lens_protocol_write_uint8(c)
         self.husky_lens_protocol_write_end()
       
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def setNameByID(self, algo : int, ID : int, name: str):
         utf8_bytes = name.encode('utf-8')
@@ -660,7 +660,7 @@ class ProtocolV2(object):
             self.husky_lens_protocol_write_uint8(c)
         self.husky_lens_protocol_write_end()
         
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def setMultiAlgorithm(self, algos:list):
         customAlgoNum = 0;
@@ -680,7 +680,7 @@ class ProtocolV2(object):
             self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_end()
 
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
     def setMultiAlgorithmRatio(self,ratios : list):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM_RATIO);
@@ -694,7 +694,7 @@ class ProtocolV2(object):
 
         self.husky_lens_protocol_write_end()
         
-        return self.executeCommand(wait_cmd=COMMAND_RETURN_OK)
+        return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
     
     def executeCommand(self, wait_cmd):
         for _ in range(0,3):

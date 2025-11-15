@@ -8,22 +8,22 @@
 #include <Arduino.h>
 #include <ProtocolV2.h>
 
-#define COLOR_WHITE 0    // 白色 (255, 255, 255)
-#define COLOR_RED 1      // 红色 (255, 0, 0)
-#define COLOR_ORANGE 2   // 橙色 (255, 165, 0)
-#define COLOR_YELLOW 3   // 黄色 (255, 255, 0)
-#define COLOR_GREEN 4    // 绿色 (0, 255, 0)
-#define COLOR_CYAN 5     // 青色 (0, 255, 255)
-#define COLOR_BLUE 6     // 蓝色 (0, 0, 255)
-#define COLOR_PURPLE 7   // 紫色 (128, 0, 128)
-#define COLOR_PINK 8     // 粉色 (255, 192, 203)
-#define COLOR_GRAY 9     // 灰色 (128, 128, 128)
-#define COLOR_BLACK 10   // 黑色 (0, 0, 0)
-#define COLOR_BROWN 11   // 棕色 (165, 42, 42)
-#define COLOR_OLIVE 12   // 橄榄绿 (128, 128, 0)
-#define COLOR_TEAL 13    // 蓝绿色 (0, 128, 128)
-#define COLOR_INDIGO 14  // 靛蓝色 (75, 0, 130)
-#define COLOR_MAGENTA 15 // 洋红色 (255, 0, 255)
+#define COLOR_WHITE 0xFFFFFF   // 白色
+#define COLOR_RED 0xFF0000     // 红色
+#define COLOR_ORANGE 0xFFA500  // 橙色
+#define COLOR_YELLOW 0xFFFF00  // 黄色
+#define COLOR_GREEN 0x00FF00   // 绿色
+#define COLOR_CYAN 0x00FFFF    // 青色
+#define COLOR_BLUE 0x0000FF    // 蓝色
+#define COLOR_PURPLE 0x800080  // 紫色
+#define COLOR_PINK 0xFFC0CB    // 粉色
+#define COLOR_GRAY 0x808080    // 灰色
+#define COLOR_BLACK 0x000000   // 黑色
+#define COLOR_BROWN 0xA52A2A   // 棕色
+#define COLOR_OLIVE 0x808000   // 橄榄绿
+#define COLOR_TEAL 0x008080    // 蓝绿色
+#define COLOR_INDIGO 0x4B0082  // 靛蓝色
+#define COLOR_MAGENTA 0xFF00FF // 洋红色
 
 class HuskylensV2 : public ProtocolV2 {
 
@@ -36,7 +36,7 @@ public:
 
   int8_t getResult(eAlgorithm_t algo);
   bool available(eAlgorithm_t algo);
-
+  bool switchAlgorithm(eAlgorithm_t algo);
   Result *popCachedResult(eAlgorithm_t algo);
   Result *getCachedCenterResult(eAlgorithm_t algo);
   Result *getCachedResultByIndex(eAlgorithm_t algo, int16_t index);

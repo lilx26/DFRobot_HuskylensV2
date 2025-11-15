@@ -247,6 +247,7 @@ bool ProtocolV2::knock(void) {
 bool ProtocolV2::switchAlgorithm(eAlgorithm_t algo) {
   DBG("\n");
   bool ret = false;
+
   uint8_t *buffer =
       husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
 
@@ -564,19 +565,22 @@ bool ProtocolV2::forgot(eAlgorithm_t algo) {
   return ret;
 }
 
-bool ProtocolV2::drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth,
+bool ProtocolV2::drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth,
                           int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_RECT);
-  husky_lens_protocol_write_uint8(colorID);
+  husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(lineWidth);
 
   husky_lens_protocol_write_int16(x1);
   husky_lens_protocol_write_int16(y1);
   husky_lens_protocol_write_int16(x2);
   husky_lens_protocol_write_int16(y2);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int32(color);
+
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -594,20 +598,23 @@ bool ProtocolV2::drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth,
   return ret;
 }
 
-bool ProtocolV2::drawUniqueRect(eAlgorithm_t algo, uint8_t colorID,
+bool ProtocolV2::drawUniqueRect(eAlgorithm_t algo, uint32_t color,
                                 uint8_t lineWidth, int16_t x1, int16_t y1,
                                 int16_t x2, int16_t y2) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_UNIQUE_RECT);
-  husky_lens_protocol_write_uint8(colorID);
+  husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(lineWidth);
 
   husky_lens_protocol_write_int16(x1);
   husky_lens_protocol_write_int16(y1);
   husky_lens_protocol_write_int16(x2);
   husky_lens_protocol_write_int16(y2);
+  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_int32(color);
+
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -629,7 +636,7 @@ bool ProtocolV2::clearRect(eAlgorithm_t algo) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAN_RECT);
+      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAR_RECT);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -647,13 +654,13 @@ bool ProtocolV2::clearRect(eAlgorithm_t algo) {
   return ret;
 }
 
-bool ProtocolV2::drawText(eAlgorithm_t algo, uint8_t colorID, uint8_t fontSize,
+bool ProtocolV2::drawText(eAlgorithm_t algo, uint32_t color, uint8_t fontSize,
                           int16_t x, int16_t y, String text) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_TEXT);
-  husky_lens_protocol_write_uint8(colorID);
+  husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(fontSize);
 
   husky_lens_protocol_write_int16(x);
@@ -664,40 +671,9 @@ bool ProtocolV2::drawText(eAlgorithm_t algo, uint8_t colorID, uint8_t fontSize,
   for (uint8_t i = 0; i < text.length(); i++) {
     husky_lens_protocol_write_uint8(text[i]);
   }
-  int length = husky_lens_protocol_write_end();
+  husky_lens_protocol_write_uint8(0);
+  husky_lens_protocol_write_int32(color);
 
-  for (int i = 0; i < retry; i++) {
-    protocolWrite(buffer, length);
-    if (wait(COMMAND_RETURN_ARGS)) {
-      PacketHead_t *head = (PacketHead_t *)receive_buffer;
-      PacketData_t *packet = (PacketData_t *)head->data;
-
-      if (packet->retValue == 0) {
-        ret = true;
-      }
-      return ret;
-    }
-  }
-  return ret;
-}
-
-bool ProtocolV2::drawText(eAlgorithm_t algo, uint8_t colorID, uint8_t bgcolorID,
-                          uint8_t fontSize, int16_t x, int16_t y, String text) {
-  DBG("\n");
-  bool ret = false;
-  uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_TEXT);
-  husky_lens_protocol_write_uint8(colorID);
-  husky_lens_protocol_write_uint8(fontSize);
-
-  husky_lens_protocol_write_int16(x);
-  husky_lens_protocol_write_int16(y);
-  husky_lens_protocol_write_int16(256 + bgcolorID);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_uint8(text.length());
-  for (uint8_t i = 0; i < text.length(); i++) {
-    husky_lens_protocol_write_uint8(text[i]);
-  }
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
