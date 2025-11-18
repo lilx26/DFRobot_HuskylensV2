@@ -28,8 +28,8 @@ HuskylensV2 huskylens;
 
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(115200, SERIAL_8N1, RX_PIN_P0, TX_PIN_P1);
-  while (!huskylens.begin(Serial1)) {
+  Wire.begin();
+  while (!huskylens.begin(Wire)) {
     Serial.println(F("Begin failed!"));
     Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS "
                      "(General Settings>>Protocol Type>>I2C)"));
@@ -54,8 +54,7 @@ void loop() {
   int x2 = handResult->thumb_tip_x;
   int y2 = handResult->thumb_tip_y;
   huskylens.setMultiAlgorithmRatio(1, 0, 0);
-  huskylens.learnBlock(ALGORITHM_OBJECT_RECOGNITION, x1, y1, x2,
-                                    y2);
+  huskylens.learnBlock(ALGORITHM_OBJECT_RECOGNITION, x1, y1, x2, y2);
   while (1) {
     if (!huskylens.getResult(ALGORITHM_OBJECT_RECOGNITION)) {
       Serial.println(

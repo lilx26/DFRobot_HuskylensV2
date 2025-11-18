@@ -41,6 +41,24 @@ void husky_lens_protocol_write_int16(int16_t content) {
   send_index += sizeof(content);
 }
 
+void husky_lens_protocol_write_zero_bytes(int16_t num) {
+  if (send_index + num >= CMD_BUFFER_SIZE) {
+    send_fail = true;
+    return;
+  }
+  memset(send_buffer + send_index, 0, num);
+  send_index += num;
+}
+
+void husky_lens_protocol_write_string(String str) {
+  if (send_index + str.length() >= CMD_BUFFER_SIZE) {
+    send_fail = true;
+    return;
+  }
+  memcpy(send_buffer + send_index, str.c_str(), str.length());
+  send_index += str.length();
+}
+
 void husky_lens_protocol_write_int32(int32_t content) {
   if (send_index + sizeof(content) >= CMD_BUFFER_SIZE) {
     send_fail = true;
@@ -945,6 +963,28 @@ bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
   husky_lens_protocol_write_int16(0);
   husky_lens_protocol_write_uint8(key.length());
   husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        ret = true;
+      }
+      return ret;
+    }
+  }
+  return ret;
+}
+
+bool ProtocolV2::updateAlgoParams(eAlgorithm_t algo) {
+  DBG("\n");
+  bool ret = false;
+  uint8_t *buffer = husky_lens_protocol_write_begin(
+      algo, COMMAND_ACTION_UPDATE_ALGORITHM_PARAMS);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {

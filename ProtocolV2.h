@@ -52,6 +52,7 @@ public:
   bool setAlgoParamBool(eAlgorithm_t algo, String key, bool value);
   bool setAlgoParamFloat(eAlgorithm_t algo, String key, float value);
   bool setAlgoParamString(eAlgorithm_t algo, String key, String value);
+  bool updateAlgoParams(eAlgorithm_t algo);
 
 public:
   int16_t maxID;
