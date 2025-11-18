@@ -271,11 +271,7 @@ bool ProtocolV2::switchAlgorithm(eAlgorithm_t algo) {
       husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
 
   husky_lens_protocol_write_uint8((uint8_t)algo);
-  husky_lens_protocol_write_uint8(0);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_int16(0);
+  husky_lens_protocol_write_zero_bytes(9);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -999,18 +995,9 @@ bool ProtocolV2::setAlgoParamString(eAlgorithm_t algo, String key,
   bool ret = false;
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
-  husky_lens_protocol_write_uint8(0);
-  husky_lens_protocol_write_uint8(0);
-
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_uint8(key.length());
-  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
-  husky_lens_protocol_write_uint8(value.length());
-  husky_lens_protocol_write_buffer_uint8((uint8_t *)value.c_str(),
-                                         value.length());
+  husky_lens_protocol_write_zero_bytes(10);
+  husky_lens_protocol_write_string(key);
+  husky_lens_protocol_write_string(value);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
