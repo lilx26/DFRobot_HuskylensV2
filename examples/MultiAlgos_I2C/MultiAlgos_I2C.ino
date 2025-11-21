@@ -23,8 +23,6 @@
 
 // HUSKYLENS green line >> SDA; blue line >> SCL
 HuskylensV2 huskylens;
-#define RX_PIN_P0 1
-#define TX_PIN_P1 2
 
 void setup() {
   Serial.begin(115200);
@@ -37,44 +35,81 @@ void setup() {
     delay(100);
   }
   huskylens.setMultiAlgorithm(ALGORITHM_FACE_RECOGNITION,
-                              ALGORITHM_OBJECT_RECOGNITION,
+                              ALGORITHM_OBJECT_TRACKING,
                               ALGORITHM_HAND_RECOGNITION);
+  delay(5000);
   huskylens.setMultiAlgorithmRatio(0, 0, 1);
+  delay(1000);
 }
+
+int x1_, y1_, x2_, y2_;
+bool start = false;
+bool learned = false;
 
 void loop() {
   while (!huskylens.getResult(ALGORITHM_HAND_RECOGNITION)) {
     delay(100);
   }
-
   HandResult *handResult = static_cast<HandResult *>(
       huskylens.popCachedResult(ALGORITHM_HAND_RECOGNITION));
-  int x1 = handResult->index_finger_tip_x;
-  int y1 = handResult->index_finger_tip_y;
-  int x2 = handResult->thumb_tip_x;
-  int y2 = handResult->thumb_tip_y;
-  huskylens.setMultiAlgorithmRatio(1, 0, 0);
-  huskylens.learnBlock(ALGORITHM_OBJECT_RECOGNITION, x1, y1, x2, y2);
+  uint32_t distance =
+      SQUARE(handResult->index_finger_tip_x - handResult->thumb_tip_x) +
+      SQUARE(handResult->index_finger_tip_y - handResult->thumb_tip_y);
+
+  Serial.print("distance=");
+  Serial.println(distance);
+
+  if (!start && distance < 300) {
+    huskylens.clearText();
+    huskylens.drawText(COLOR_RED, 20, 10, 10, "Start Draw Rect");
+    x1_ = ((int)handResult->index_finger_tip_x + handResult->thumb_tip_x) / 2;
+    y1_ = ((int)handResult->index_finger_tip_y + handResult->thumb_tip_y) / 2;
+    start = true;
+    Serial.print("x1=");
+    Serial.println(x1_);
+    Serial.print("y1=");
+    Serial.println(y1_);
+    return;
+  }
+  if (start && (distance < 3000)) {
+    x2_ = ((int)handResult->index_finger_tip_x + handResult->thumb_tip_x) / 2;
+    y2_ = ((int)handResult->index_finger_tip_y + handResult->thumb_tip_y) / 2;
+    huskylens.drawUniqueRect(COLOR_GREEN, 2, x1_, y1_, x2_ - x1_, y2_ - y1_);
+    Serial.print("x2=");
+    Serial.println(x2_);
+    Serial.print("y2=");
+    Serial.println(y2_);
+    return;
+  }
+  if (start && distance > 10000) {
+    huskylens.clearText();
+    huskylens.drawText(COLOR_RED, 20, 10, 10, "End Draw Rect, Start Learn");
+    huskylens.setMultiAlgorithmRatio(0, 1, 0);
+    huskylens.learnBlock(ALGORITHM_OBJECT_TRACKING, x1_, y1_, x2_ - x1_,
+                         y2_ - y1_);
+    learned = true;
+    start = false;
+  }
+  if (!learned)
+    return;
   while (1) {
-    if (!huskylens.getResult(ALGORITHM_OBJECT_RECOGNITION)) {
-      Serial.println(
-          F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    if (!huskylens.getResult(ALGORITHM_OBJECT_TRACKING)) {
       continue;
     }
-    if (!huskylens.available(ALGORITHM_OBJECT_RECOGNITION)) {
+    if (!huskylens.available(ALGORITHM_OBJECT_TRACKING)) {
       continue;
     }
-    Result *result = (huskylens.popCachedResult(ALGORITHM_OBJECT_RECOGNITION));
+    Result *result = (huskylens.popCachedResult(ALGORITHM_OBJECT_TRACKING));
     Serial.print("result->ID=");
     Serial.println(result->ID, HEX);
     Serial.print("result->xCenter=");
-    Serial.println(result->xCenter, HEX);
+    Serial.println(result->xCenter);
     Serial.print("result->yCenter=");
-    Serial.println(result->yCenter, HEX);
+    Serial.println(result->yCenter);
     Serial.print("result->width=");
-    Serial.println(result->width, HEX);
+    Serial.println(result->width);
     Serial.print("result->height=");
-    Serial.println(result->height, HEX);
+    Serial.println(result->height);
     Serial.print("result->name=");
     Serial.println(result->name);
     Serial.print("result->content=");

@@ -153,13 +153,13 @@ bool learn(eAlgorithm_t algo);
  * @fn learnBlock
  * @brief 学习特定的区块
  * @param algo 用于学习的算法
- * @param x1 区块左上角的x坐标
- * @param y1 区块左上角的y坐标
- * @param x2 区块右下角的x坐标
- * @param y2 区块右下角的y坐标
+ * @param x 区块左上角的x坐标
+ * @param y 区块左上角的y坐标
+ * @param width 区块的宽度
+ * @param height 区块的高度
  * @return 学习成功返回true，否则返回false
  */
-bool learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+bool learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
  * @fn forgot
@@ -197,13 +197,13 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
  * @param algo 算法上下文
  * @param colorID 矩形的颜色ID
  * @param lineWidth 矩形的线宽
- * @param x1 左上角的x坐标
- * @param y1 左上角的y坐标
- * @param x2 右下角的x坐标
- * @param y2 右下角的y坐标
+ * @param x 左上角的x坐标
+ * @param y 左上角的y坐标
+ * @param width 矩形的宽度
+ * @param height 矩形的高度
  * @return 绘制成功返回true，否则返回false
  */
-bool drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+bool drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
  * @fn drawRect
@@ -211,13 +211,13 @@ bool drawRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x1,
  * @param algo 算法上下文
  * @param colorID 矩形的颜色ID
  * @param lineWidth 矩形的线宽
- * @param x1 左上角的x坐标
- * @param y1 左上角的y坐标
- * @param x2 右下角的x坐标
- * @param y2 右下角的y坐标
+ * @param x 左上角的x坐标
+ * @param y 左上角的y坐标
+ * @param width 矩形的宽度
+ * @param height 矩形的高度
  * @return 绘制成功返回true，否则返回false
  */
-bool drawUniqueRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+bool drawUniqueRect(eAlgorithm_t algo, uint8_t colorID, uint8_t lineWidth, int16_t x, int16_t y, int16_t width, int16_t height);
 
 
 /**

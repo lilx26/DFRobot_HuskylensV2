@@ -153,13 +153,13 @@ bool learn(eAlgorithm_t algo);
  * @fn learnBlock
  * @brief Learn a specific block region
  * @param algo The algorithm to use for learning
- * @param x1 The x-coordinate of the top-left corner of the block
- * @param y1 The y-coordinate of the top-left corner of the block
- * @param x2 The x-coordinate of the bottom-right corner of the block
- * @param y2 The y-coordinate of the bottom-right corner of the block
+ * @param x The x-coordinate of the top-left corner of the block
+ * @param y The y-coordinate of the top-left corner of the block
+ * @param width The width of the block
+ * @param height The height of the block
  * @return true if learning is successful, false otherwise
  */
-bool learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+bool learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
  * @fn forgot
@@ -197,13 +197,13 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
  * @param algo The algorithm context
  * @param color The color  of the rectangle
  * @param lineWidth The line width of the rectangle
- * @param x1 The x-coordinate of the top-left corner
- * @param y1 The y-coordinate of the top-left corner
- * @param x2 The x-coordinate of the bottom-right corner
- * @param y2 The y-coordinate of the bottom-right corner
+ * @param x The x-coordinate of the top-left corner
+ * @param y The y-coordinate of the top-left corner
+ * @param width The width of the rectangle
+ * @param height The height of the rectangle
  * @return true if drawing is successful, false otherwise
  */
-bool drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth, int16_t x1, int16_t y1, int16_t x2, int16_t y2);
+bool drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
  * @fn drawText

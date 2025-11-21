@@ -19,21 +19,21 @@ public:
   bool knock(void);
   int8_t getResult(eAlgorithm_t algo);
   uint8_t learn(eAlgorithm_t algo);
-  uint8_t learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1, int16_t x2,
-                     int16_t y2);
+  uint8_t learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width,
+                     int16_t height);
   bool forgot(eAlgorithm_t algo);
   bool switchAlgorithm(eAlgorithm_t algo);
-  bool takePhoto(eAlgorithm_t algo);
-  bool takeScreenshot(eAlgorithm_t algo);
+  bool takePhoto();
+  bool takeScreenshot();
 
-  bool drawUniqueRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth,
-                      int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-  bool drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth,
-                int16_t x1, int16_t y1, int16_t x2, int16_t y2);
-  bool clearRect(eAlgorithm_t algo);
-  bool drawText(eAlgorithm_t algo, uint32_t color, uint8_t fontSize, int16_t x,
-                int16_t y, String text);
-  bool clearText(eAlgorithm_t algo);
+  bool drawUniqueRect(uint32_t color, uint8_t lineWidth, int16_t x, int16_t y,
+                      int16_t width, int16_t height);
+  bool drawRect(uint32_t color, uint8_t lineWidth, int16_t x, int16_t y,
+                int16_t width, int16_t height);
+  bool clearRect();
+  bool drawText(uint32_t color, uint8_t fontSize, int16_t x, int16_t y,
+                String text);
+  bool clearText();
   bool saveKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
   bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
   bool playMusic(String name, int16_t volume);

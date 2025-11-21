@@ -513,14 +513,14 @@ class ProtocolV2(object):
             cs = cs + self.send_buffer[i]
         self.send_buffer[self.send_index] = cs & 0xFF
         self.send_index = self.send_index + 1
-    def learnBlock(self, algo, x1,  y1, x2,  y2):
+    def learnBlock(self, algo, x, y, width, height):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN_BLOCK);
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_uint8(0)
-        self.husky_lens_protocol_write_int16(x1)
-        self.husky_lens_protocol_write_int16(y1)
-        self.husky_lens_protocol_write_int16(x2)
-        self.husky_lens_protocol_write_int16(y2)
+        self.husky_lens_protocol_write_int16(x)
+        self.husky_lens_protocol_write_int16(y)
+        self.husky_lens_protocol_write_int16(width)
+        self.husky_lens_protocol_write_int16(height)
         self.husky_lens_protocol_write_end()
         
         return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
@@ -559,15 +559,15 @@ class ProtocolV2(object):
 
         return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 
-    def drawRect(self, algo:int, color:int, x1:int, y1:int, x2:int, y2:int):
+    def drawRect(self, algo:int, color:int, x:int, y:int, width:int, height:int):
         color = self.rgb888_to_rgb565(color)
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_RECT)
         self.husky_lens_protocol_write_int16(color)
-        self.husky_lens_protocol_write_int16(x1)
-        self.husky_lens_protocol_write_int16(y1)
-        self.husky_lens_protocol_write_int16(x2)
-        self.husky_lens_protocol_write_int16(y2)
-        self.husky_lens_protocol_write_end();
+        self.husky_lens_protocol_write_int16(x)
+        self.husky_lens_protocol_write_int16(y)
+        self.husky_lens_protocol_write_int16(width)
+        self.husky_lens_protocol_write_int16(height)
+        self.husky_lens_protocol_write_end()
       
         return self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
 

@@ -387,27 +387,36 @@ bool ProtocolV2::doSetMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1,
       ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM);
   uint8_t multiAlgoNum = 0;
   int16_t algos[3] = {ALGORITHM_ANY, ALGORITHM_ANY, ALGORITHM_ANY};
+  DBG("\n");
   if (algo0 != ALGORITHM_ANY) {
     multiAlgoNum++;
     algos[0] = algo0;
   }
+  DBG("\n");
   if (algo1 != ALGORITHM_ANY) {
     multiAlgoNum++;
     algos[1] = algo1;
   }
+  DBG("\n");
   if (algo2 != ALGORITHM_ANY) {
     multiAlgoNum++;
     algos[2] = algo2;
   }
+  DBG("\n");
 
   husky_lens_protocol_write_uint8(multiAlgoNum);
+  DBG("\n");
   husky_lens_protocol_write_uint8(0);
-  multiAlgoNum = multiAlgoNum < 4 ? 4 : multiAlgoNum;
-  for (uint8_t i = 0; i < multiAlgoNum; i++) {
-    husky_lens_protocol_write_int16(algos[i]);
+  DBG("\n");
+  for (uint8_t i = 0; i < 4; i++) {
+    if (i < multiAlgoNum) {
+      husky_lens_protocol_write_int16(algos[i]);
+    } else {
+      husky_lens_protocol_write_int16(0);
+    }
   }
   DBG("----");
-  DBG_HEX_ARRAY(buffer, 20);
+  DBG_HEX_ARRAY(buffer, 16);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -433,30 +442,41 @@ bool ProtocolV2::setMultiAlgorithmRatio(int8_t ratio0, int8_t ratio1,
   uint8_t *buffer = husky_lens_protocol_write_begin(
       ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM_RATIO);
   uint8_t multiAlgoNum = 0;
+  DBG("\n");
   int16_t ratios[3];
   if (ratio0 != -1) {
     multiAlgoNum++;
     ratios[0] = ratio0;
   }
+  DBG("\n");
   if (ratio1 != -1) {
     multiAlgoNum++;
     ratios[1] = ratio1;
   }
+  DBG("\n");
   if (ratio2 != -1) {
     multiAlgoNum++;
     ratios[2] = ratio2;
   }
+  DBG("\n");
   husky_lens_protocol_write_uint8(multiAlgoNum);
   husky_lens_protocol_write_uint8(0);
-  multiAlgoNum = multiAlgoNum < 4 ? 4 : multiAlgoNum;
-  for (uint8_t i = 0; i < multiAlgoNum; i++) {
-    husky_lens_protocol_write_int16(ratios[i]);
+  DBG("\n");
+  for (uint8_t i = 0; i < 4; i++) {
+    if (i < multiAlgoNum) {
+      husky_lens_protocol_write_int16(ratios[i]);
+    } else {
+      husky_lens_protocol_write_int16(0);
+    }
   }
+  DBG("\n");
   int length = husky_lens_protocol_write_end();
-
+  DBG("\n");
   for (int i = 0; i < retry; i++) {
     protocolWrite(buffer, length);
+    DBG("\n");
     if (wait(COMMAND_RETURN_ARGS)) {
+      DBG("\n");
       PacketHead_t *head = (PacketHead_t *)receive_buffer;
       PacketData_t *packet = (PacketData_t *)head->data;
 
@@ -469,18 +489,18 @@ bool ProtocolV2::setMultiAlgorithmRatio(int8_t ratio0, int8_t ratio1,
   return ret;
 }
 #endif
-uint8_t ProtocolV2::learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1,
-                               int16_t x2, int16_t y2) {
+uint8_t ProtocolV2::learnBlock(eAlgorithm_t algo, int16_t x, int16_t y,
+                               int16_t width, int16_t height) {
   DBG("\n");
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN_BLOCK);
   husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(0);
 
-  husky_lens_protocol_write_int16(x1);
-  husky_lens_protocol_write_int16(y1);
-  husky_lens_protocol_write_int16(x2);
-  husky_lens_protocol_write_int16(y2);
+  husky_lens_protocol_write_int16(x);
+  husky_lens_protocol_write_int16(y);
+  husky_lens_protocol_write_int16(width);
+  husky_lens_protocol_write_int16(height);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -496,11 +516,11 @@ uint8_t ProtocolV2::learnBlock(eAlgorithm_t algo, int16_t x1, int16_t y1,
 }
 
 // 后续返回值修改为String
-bool ProtocolV2::takePhoto(eAlgorithm_t algo) {
+bool ProtocolV2::takePhoto() {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_TAKE_PHOTO);
+      husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_PHOTO);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -519,11 +539,11 @@ bool ProtocolV2::takePhoto(eAlgorithm_t algo) {
 }
 
 // 后续返回值修改为String
-bool ProtocolV2::takeScreenshot(eAlgorithm_t algo) {
+bool ProtocolV2::takeScreenshot() {
   DBG("\n");
   bool ret = false;
-  uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_TAKE_SCREENSHOT);
+  uint8_t *buffer = husky_lens_protocol_write_begin(
+      ALGORITHM_ANY, COMMAND_ACTION_TAKE_SCREENSHOT);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -580,19 +600,19 @@ bool ProtocolV2::forgot(eAlgorithm_t algo) {
   return ret;
 }
 
-bool ProtocolV2::drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth,
-                          int16_t x1, int16_t y1, int16_t x2, int16_t y2) {
+bool ProtocolV2::drawRect(uint32_t color, uint8_t lineWidth, int16_t x,
+                          int16_t y, int16_t width, int16_t height) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_RECT);
+      husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_DRAW_RECT);
   husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(lineWidth);
 
-  husky_lens_protocol_write_int16(x1);
-  husky_lens_protocol_write_int16(y1);
-  husky_lens_protocol_write_int16(x2);
-  husky_lens_protocol_write_int16(y2);
+  husky_lens_protocol_write_int16(x);
+  husky_lens_protocol_write_int16(y);
+  husky_lens_protocol_write_int16(width);
+  husky_lens_protocol_write_int16(height);
   husky_lens_protocol_write_int16(0);
   husky_lens_protocol_write_int32(color);
 
@@ -613,20 +633,19 @@ bool ProtocolV2::drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth,
   return ret;
 }
 
-bool ProtocolV2::drawUniqueRect(eAlgorithm_t algo, uint32_t color,
-                                uint8_t lineWidth, int16_t x1, int16_t y1,
-                                int16_t x2, int16_t y2) {
+bool ProtocolV2::drawUniqueRect(uint32_t color, uint8_t lineWidth, int16_t x,
+                                int16_t y, int16_t width, int16_t height) {
   DBG("\n");
   bool ret = false;
-  uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_UNIQUE_RECT);
+  uint8_t *buffer = husky_lens_protocol_write_begin(
+      ALGORITHM_ANY, COMMAND_ACTION_DRAW_UNIQUE_RECT);
   husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(lineWidth);
 
-  husky_lens_protocol_write_int16(x1);
-  husky_lens_protocol_write_int16(y1);
-  husky_lens_protocol_write_int16(x2);
-  husky_lens_protocol_write_int16(y2);
+  husky_lens_protocol_write_int16(x);
+  husky_lens_protocol_write_int16(y);
+  husky_lens_protocol_write_int16(width);
+  husky_lens_protocol_write_int16(height);
   husky_lens_protocol_write_int16(0);
   husky_lens_protocol_write_int32(color);
 
@@ -647,11 +666,11 @@ bool ProtocolV2::drawUniqueRect(eAlgorithm_t algo, uint32_t color,
   return ret;
 }
 
-bool ProtocolV2::clearRect(eAlgorithm_t algo) {
+bool ProtocolV2::clearRect() {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAR_RECT);
+      husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_CLEAR_RECT);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -669,12 +688,12 @@ bool ProtocolV2::clearRect(eAlgorithm_t algo) {
   return ret;
 }
 
-bool ProtocolV2::drawText(eAlgorithm_t algo, uint32_t color, uint8_t fontSize,
-                          int16_t x, int16_t y, String text) {
+bool ProtocolV2::drawText(uint32_t color, uint8_t fontSize, int16_t x,
+                          int16_t y, String text) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_DRAW_TEXT);
+      husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_DRAW_TEXT);
   husky_lens_protocol_write_uint8(0);
   husky_lens_protocol_write_uint8(fontSize);
 
@@ -706,11 +725,11 @@ bool ProtocolV2::drawText(eAlgorithm_t algo, uint32_t color, uint8_t fontSize,
   return ret;
 }
 
-bool ProtocolV2::clearText(eAlgorithm_t algo) {
+bool ProtocolV2::clearText() {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_CLEAR_TEXT);
+      husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_CLEAR_TEXT);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {

@@ -40,26 +40,22 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
+  while (!huskylens.getResult(ALGORITHM_GAZE_RECOGNITION)) {
     delay(100);
   }
 
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
+  while (huskylens.available(ALGORITHM_GAZE_RECOGNITION)) {
+    Result *result = static_cast<Result *>(
+        huskylens.popCachedResult(ALGORITHM_GAZE_RECOGNITION));
 
     Serial.print("result->ID=");
     Serial.println(result->ID);
 
-    Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
-    Serial.print(",");
-    Serial.print(result->yCenter);
-    Serial.println(")");
+    Serial.print("result->pitch=");
+    Serial.println(result->pitch);
+    Serial.print("result->yaw=");
+    Serial.println(result->yaw);
 
-    Serial.println(result->width);
-    Serial.print("result->height=");
-    Serial.println(result->height);
     Serial.print("result->name=");
     Serial.println(result->name);
     Serial.print("result->content=");

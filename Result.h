@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <Stream.h>
-#if 1
+#if 0
 #define DBG(x)                                                                 \
   do {                                                                         \
     Serial.print(__FUNCTION__);                                                \
@@ -122,30 +122,28 @@ enum protocolCommand {
 typedef enum {
   ALGORITHM_ANY = 0,                      // 0
   ALGORITHM_FACE_RECOGNITION = 1,         // 1
-  ALGORITHM_OBJECT_TRACKING,              // 2
-  ALGORITHM_OBJECT_RECOGNITION,           // 3
-  ALGORITHM_LINE_TRACKING,                // 6
-  ALGORITHM_COLOR_RECOGNITION,            // 5
-  ALGORITHM_TAG_RECOGNITION,              // 6
-  ALGORITHM_SELF_LEARNING_CLASSIFICATION, // 7
-  ALGORITHM_OCR_RECOGNITION,              // 8
-  ALGORITHM_LICENSE_RECOGNITION,          // 9
-  ALGORITHM_QRCODE_RECOGNITION,           // 10
-  ALGORITHM_BARCODE_RECOGNITION,          // 11
-  ALGORITHM_EMOTION_RECOGNITION,          // 12
-  ALGORITHM_POSE_RECOGNITION,             // 13
-  ALGORITHM_HAND_RECOGNITION,             // 14
-  ALGORITHM_OBJECT_CLASSIFICATION,        // 15
-  ALGORITHM_BLINK_RECOGNITION,            // 16
-  ALGORITHM_GAZE_RECOGNITION,             // 17
-  ALGORITHM_FACE_ORIENTATION,             // 18
+  ALGORITHM_OBJECT_RECOGNITION,           // 2
+  ALGORITHM_OBJECT_TRACKING,              // 3
+  ALGORITHM_COLOR_RECOGNITION,            // 4
+  ALGORITHM_OBJECT_CLASSIFICATION,        // 5
+  ALGORITHM_SELF_LEARNING_CLASSIFICATION, // 6
+  ALGORITHM_SEGMENT,                      // 7
+  ALGORITHM_HAND_RECOGNITION,             // 8
+  ALGORITHM_POSE_RECOGNITION,             // 9
+  ALGORITHM_LICENSE_RECOGNITION,          // 10
+  ALGORITHM_OCR_RECOGNITION,              // 11
+  ALGORITHM_LINE_TRACKING,                // 12
+  ALGORITHM_EMOTION_RECOGNITION,          // 13
+  ALGORITHM_GAZE_RECOGNITION,             // 14
+  ALGORITHM_FACE_ORIENTATION,             // 15
+  ALGORITHM_TAG_RECOGNITION,              // 16
+  ALGORITHM_BARCODE_RECOGNITION,          // 17
+  ALGORITHM_QRCODE_RECOGNITION,           // 18
   ALGORITHM_FALLDOWN_RECOGNITION,         // 19
-  ALGORITHM_SEGMENT,                      // 20
-  ALGORITHM_FACE_ACTION_RECOGNITION,      // 21
-  ALGORITHM_CUSTOM0,                      // 22
-  ALGORITHM_CUSTOM1,                      // 23
-  ALGORITHM_CUSTOM2,                      // 24
-  ALGORITHM_BUILTIN_COUNT,                // 25
+  ALGORITHM_CUSTOM0,                      // 20
+  ALGORITHM_CUSTOM1,                      // 21
+  ALGORITHM_CUSTOM2,                      // 22
+  ALGORITHM_BUILTIN_COUNT,                // 23
 
   ALGORITHM_CUSTOM_BEGIN = 128, // 128
 
@@ -205,7 +203,6 @@ typedef struct __attribute__((packed)) {
     uint8_t maxID;
     uint8_t rfu0;
     uint8_t boardType;
-    uint8_t totalSensors;
     uint8_t multiAlgoNum;
   };
   union {
@@ -214,7 +211,6 @@ typedef struct __attribute__((packed)) {
     int8_t retValue;
     int8_t lineWidth;
     int8_t confidence;
-    int8_t currSensorIndex;
   };
   union {
     int16_t first;
@@ -222,22 +218,22 @@ typedef struct __attribute__((packed)) {
     int16_t xTarget;
     int16_t algorithmType;
     int16_t classID;
-    int16_t sensor0ID;
     int16_t total_results;
+    int16_t pitch; // eular[0],沿Y轴移动，俯仰角,上下移动
   };
   union {
     int16_t second;
     int16_t yCenter;
     int16_t yTarget;
-    int16_t sensor1ID;
     int16_t total_results_learned;
+    int16_t yaw; // eular[1], 沿Z轴移动， 偏航角,左右移动
   };
   union {
     int16_t third;
     int16_t width;
     int16_t angle;
-    int16_t sensor2ID;
     int16_t total_blocks;
+    int16_t roll; // eular[2], 沿X轴移动， 横滚角,前后移动
   };
   union {
     int16_t fourth;

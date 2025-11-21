@@ -38,15 +38,13 @@ void setup() {
 }
 
 void loop() {
-  huskylens.clearText(ALGORITHM_OBJECT_RECOGNITION);
+  huskylens.clearText();
   delay(2000);
-  huskylens.drawText(ALGORITHM_OBJECT_RECOGNITION, COLOR_RED, 20, 10, 10,
-                     "DFRobot Test");
+  huskylens.drawText(COLOR_RED, 20, 10, 10, "DFRobot Test");
   delay(2000);
-  huskylens.clearRect(ALGORITHM_OBJECT_RECOGNITION);
+  huskylens.clearRect();
   delay(2000);
-  huskylens.drawRect(ALGORITHM_OBJECT_RECOGNITION, COLOR_GREEN, 4, 10, 10, 200,
-                     30);
+  huskylens.drawRect(COLOR_GREEN, 4, 10, 10, 200, 30);
   delay(2000);
   huskylens.learn(ALGORITHM_OBJECT_RECOGNITION);
   delay(2000);
@@ -59,8 +57,8 @@ void loop() {
   huskylens.playMusic("abc.mp3", 100);
   delay(2000);
   for (int i = 0; i < 150; i++) {
-    huskylens.drawUniqueRect(ALGORITHM_OBJECT_RECOGNITION, COLOR_GREEN, 4, 100,
-                             100, 102 + i * 2, 102 + i * 2);
+    huskylens.drawUniqueRect(COLOR_GREEN, 4, 100, 100, 102 + i * 2,
+                             102 + i * 2);
     delay(5);
   }
 }
