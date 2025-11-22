@@ -38,30 +38,20 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
-    delay(100);
+  String photo = huskylens.takePhoto(RESOLUTION_1280x720);
+  if (photo != "") {
+    Serial.print("photo=");
+    Serial.println(photo);
+  } else {
+    Serial.println("take photo failed");
   }
-
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
-
-    Serial.print("result->ID=");
-    Serial.println(result->ID);
-
-    Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
-    Serial.print(",");
-    Serial.print(result->yCenter);
-    Serial.println(")");
-
-    Serial.println(result->width);
-    Serial.print("result->height=");
-    Serial.println(result->height);
-    Serial.print("result->name=");
-    Serial.println(result->name);
-    Serial.print("result->content=");
-    Serial.println(result->content);
+  delay(8000);
+  String screenshot = huskylens.takeScreenshot();
+  if (screenshot != "") {
+    Serial.print("screenshot=");
+    Serial.println(screenshot);
+  } else {
+    Serial.println("take screenshot failed");
   }
-  delay(1000);
+  delay(8000);
 }

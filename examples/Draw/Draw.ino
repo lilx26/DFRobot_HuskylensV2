@@ -46,19 +46,8 @@ void loop() {
   delay(2000);
   huskylens.drawRect(COLOR_GREEN, 4, 10, 10, 200, 30);
   delay(2000);
-  huskylens.learn(ALGORITHM_OBJECT_RECOGNITION);
-  delay(2000);
-  huskylens.forgot(ALGORITHM_OBJECT_RECOGNITION);
-  delay(2000);
-  huskylens.saveKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-  delay(2000);
-  huskylens.loadKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-  delay(2000);
-  huskylens.playMusic("abc.mp3", 100);
-  delay(2000);
   for (int i = 0; i < 150; i++) {
-    huskylens.drawUniqueRect(COLOR_GREEN, 4, 100, 100, 102 + i * 2,
-                             102 + i * 2);
+    huskylens.drawUniqueRect(COLOR_GREEN, 4, 50, 50, 102 + i * 2, 102 + i * 2);
     delay(5);
   }
 }

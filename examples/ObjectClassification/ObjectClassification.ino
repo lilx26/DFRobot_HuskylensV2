@@ -25,29 +25,30 @@
 HuskylensV2 huskylens;
 
 void setup() {
-    Serial.begin(115200);
-    Wire.begin();
-    while (!huskylens.begin(Wire)) {
-        Serial.println(F("Begin failed!"));
-        Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (System Settings>>Protocol Type>> I2C/UART)"));
-        Serial.println(F("2.Please recheck the connection."));
-        Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
-        delay(100);
-    }
+  Serial.begin(115200);
+  Wire.begin();
+  while (!huskylens.begin(Wire)) {
+    Serial.println(F("Begin failed!"));
+    Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS "
+                     "(System Settings>>Protocol Type>> I2C/UART)"));
+    Serial.println(F("2.Please recheck the connection."));
+    Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
+    delay(100);
+  }
 }
 
 void loop() {
-    while (!huskylens.getResult(ALGORITHM_OBJECT_CLASSIFICATION)) {
-        delay(100);
-    }
+  while (!huskylens.getResult(ALGORITHM_OBJECT_CLASSIFICATION)) {
+    delay(100);
+  }
 
-    while (huskylens.available(ALGORITHM_OBJECT_CLASSIFICATION)) {
-        Result *result = huskylens.popCachedResult(ALGORITHM_OBJECT_CLASSIFICATION);
-        Serial.print("result->name=");
-        Serial.println(result->name);
-        Serial.print("result->classID=");
-        Serial.println(result->classID);
-        Serial.println();
-    }
-    delay(1000);
+  while (huskylens.available(ALGORITHM_OBJECT_CLASSIFICATION)) {
+    Result *result = huskylens.popCachedResult(ALGORITHM_OBJECT_CLASSIFICATION);
+    Serial.print("result->name=");
+    Serial.println(result->name);
+    Serial.print("result->classID=");
+    Serial.println(result->classID);
+    Serial.println();
+  }
+  delay(1000);
 }

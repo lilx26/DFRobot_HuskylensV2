@@ -38,30 +38,8 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
-    delay(100);
-  }
-
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
-
-    Serial.print("result->ID=");
-    Serial.println(result->ID);
-
-    Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
-    Serial.print(",");
-    Serial.print(result->yCenter);
-    Serial.println(")");
-
-    Serial.println(result->width);
-    Serial.print("result->height=");
-    Serial.println(result->height);
-    Serial.print("result->name=");
-    Serial.println(result->name);
-    Serial.print("result->content=");
-    Serial.println(result->content);
-  }
-  delay(1000);
+  huskylens.saveKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
+  delay(2000);
+  huskylens.loadKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
+  delay(2000);
 }

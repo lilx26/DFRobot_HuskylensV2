@@ -78,6 +78,12 @@
 
 #define SQUARE(x) ((x) * (x))
 
+typedef enum {
+  RESOLUTION_640x480 = 0,
+  RESOLUTION_1280x720 = 1,
+  RESOLUTION_1920x1080 = 2,
+} eResolution_t;
+
 enum protocolCommand {
   COMMAND_KNOCK = 0x00,
   COMMAND_GET_RESULT = 0x01,

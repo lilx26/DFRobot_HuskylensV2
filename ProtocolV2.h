@@ -23,8 +23,8 @@ public:
                      int16_t height);
   bool forgot(eAlgorithm_t algo);
   bool switchAlgorithm(eAlgorithm_t algo);
-  bool takePhoto();
-  bool takeScreenshot();
+  String takePhoto(eResolution_t resolution = RESOLUTION_1280x720);
+  String takeScreenshot();
 
   bool drawUniqueRect(uint32_t color, uint8_t lineWidth, int16_t x, int16_t y,
                       int16_t width, int16_t height);

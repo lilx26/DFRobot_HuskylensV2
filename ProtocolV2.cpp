@@ -516,11 +516,13 @@ uint8_t ProtocolV2::learnBlock(eAlgorithm_t algo, int16_t x, int16_t y,
 }
 
 // 后续返回值修改为String
-bool ProtocolV2::takePhoto() {
+String ProtocolV2::takePhoto(eResolution_t resolution) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
       husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_PHOTO);
+  husky_lens_protocol_write_uint8(resolution);
+  husky_lens_protocol_write_zero_bytes(9);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -529,17 +531,18 @@ bool ProtocolV2::takePhoto() {
       PacketHead_t *head = (PacketHead_t *)receive_buffer;
       PacketData_t *packet = (PacketData_t *)head->data;
 
-      if (packet->retValue == 0) {
-        ret = true;
-      }
-      return ret;
+      if (packet->retValue != 0)
+        return "";
+
+      String_t *name = (String_t *)packet->payload;
+      return name->toString();
     }
   }
-  return ret;
+  return "";
 }
 
 // 后续返回值修改为String
-bool ProtocolV2::takeScreenshot() {
+String ProtocolV2::takeScreenshot() {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer = husky_lens_protocol_write_begin(
@@ -552,13 +555,14 @@ bool ProtocolV2::takeScreenshot() {
       PacketHead_t *head = (PacketHead_t *)receive_buffer;
       PacketData_t *packet = (PacketData_t *)head->data;
 
-      if (packet->retValue == 0) {
-        ret = true;
-      }
-      return ret;
+      if (packet->retValue != 0)
+        return "";
+
+      String_t *name = (String_t *)packet->payload;
+      return name->toString();
     }
   }
-  return ret;
+  return "";
 }
 
 uint8_t ProtocolV2::learn(eAlgorithm_t algo) {

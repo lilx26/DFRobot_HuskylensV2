@@ -38,30 +38,18 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
-    delay(100);
-  }
-
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
-
-    Serial.print("result->ID=");
-    Serial.println(result->ID);
-
-    Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
-    Serial.print(",");
-    Serial.print(result->yCenter);
-    Serial.println(")");
-
-    Serial.println(result->width);
-    Serial.print("result->height=");
-    Serial.println(result->height);
-    Serial.print("result->name=");
-    Serial.println(result->name);
-    Serial.print("result->content=");
-    Serial.println(result->content);
-  }
-  delay(1000);
+  bool ret = huskylens.playMusic("abc.mp3", 100);
+  Serial.print("play1 abc ret=");
+  Serial.println(ret);
+  delay(100);
+  ret = huskylens.playMusic("abc.mp3", 100);
+  Serial.print("play2 abc ret=");
+  Serial.println(ret);
+  delay(5000);
+  delay(5000);
+  delay(5000);
+  ret = huskylens.playMusic("abcd.mp3", 100);
+  Serial.print("play abcd ret=");
+  Serial.println(ret);
+  delay(5000);
 }

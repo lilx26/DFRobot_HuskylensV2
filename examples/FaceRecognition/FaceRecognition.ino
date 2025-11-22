@@ -21,7 +21,14 @@
 
 #include "DFRobot_HuskylensV2.h"
 
-// HUSKYLENS green line >> SDA; blue line >> SCL
+#define PRINT_ITEM(item)                                                       \
+  Serial.print("result->" #item "=(");                                         \
+  Serial.print(result->item##_x);                                              \
+  Serial.print(",");                                                           \
+  Serial.print(result->item##_y);                                              \
+  Serial.println(")");
+
+// HUSKYLENS green line >> SDA/TX; blue line >> SCL/RX
 HuskylensV2 huskylens;
 
 void setup() {
@@ -38,30 +45,36 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
+  while (!huskylens.getResult(ALGORITHM_FACE_RECOGNITION)) {
     delay(100);
   }
 
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
+  while (huskylens.available(ALGORITHM_FACE_RECOGNITION)) {
+    FaceResult *result = static_cast<FaceResult *>(
+        huskylens.popCachedResult(ALGORITHM_FACE_RECOGNITION));
 
     Serial.print("result->ID=");
-    Serial.println(result->ID);
+    Serial.println(result->ID, HEX);
 
     Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
+    Serial.print(result->xCenter, HEX);
     Serial.print(",");
-    Serial.print(result->yCenter);
+    Serial.print(result->yCenter, HEX);
     Serial.println(")");
 
-    Serial.println(result->width);
+    Serial.println(result->width, HEX);
     Serial.print("result->height=");
-    Serial.println(result->height);
+    Serial.println(result->height, HEX);
     Serial.print("result->name=");
     Serial.println(result->name);
     Serial.print("result->content=");
     Serial.println(result->content);
+
+    PRINT_ITEM(leye);
+    PRINT_ITEM(reye);
+    PRINT_ITEM(nose);
+    PRINT_ITEM(lmouth);
+    PRINT_ITEM(rmouth);
   }
   delay(1000);
 }

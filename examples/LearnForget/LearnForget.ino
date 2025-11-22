@@ -23,8 +23,6 @@
 
 // HUSKYLENS green line >> SDA; blue line >> SCL
 HuskylensV2 huskylens;
-#define RX_PIN_P0 1
-#define TX_PIN_P1 2
 
 void setup() {
   Serial.begin(115200);
@@ -40,28 +38,26 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_FACE_ORIENTATION)) {
-    delay(100);
-  }
+  uint8_t id = 0;
+  bool ret;
+  id = huskylens.learn(ALGORITHM_FACE_RECOGNITION);
+  Serial.print("learn id=");
+  Serial.println(id);
+  delay(10000);
 
-  while (huskylens.available(ALGORITHM_FACE_ORIENTATION)) {
-    Result *result = static_cast<Result *>(
-        huskylens.popCachedResult(ALGORITHM_FACE_ORIENTATION));
+  ret = huskylens.forgot(ALGORITHM_FACE_RECOGNITION);
+  Serial.print("forget ret=");
+  Serial.println(ret);
+  delay(10000);
 
-    Serial.print("result->ID=");
-    Serial.println(result->ID);
+  // huskylens.drawUniqueRect(COLOR_GREEN, 1, 160, 120, 320, 240);
+  id = huskylens.learnBlock(ALGORITHM_FACE_RECOGNITION, 160, 120, 320, 240);
+  Serial.print("learnBlock id=");
+  Serial.println(id);
+  delay(10000);
 
-    Serial.print("result->pitch=");
-    Serial.println(result->pitch);
-    Serial.print("result->yaw=");
-    Serial.println(result->yaw);
-    Serial.print("result->roll=");
-    Serial.println(result->roll);
-
-    Serial.print("result->name=");
-    Serial.println(result->name);
-    Serial.print("result->content=");
-    Serial.println(result->content);
-  }
-  delay(1000);
+  ret = huskylens.forgot(ALGORITHM_FACE_RECOGNITION);
+  Serial.print("forget ret=");
+  Serial.println(ret);
+  delay(10000);
 }

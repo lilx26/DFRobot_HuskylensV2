@@ -24,6 +24,13 @@
 // HUSKYLENS green line >> SDA; blue line >> SCL
 HuskylensV2 huskylens;
 
+#define PRINT_ITEM(item)                                                       \
+  Serial.print("result->" #item "=(");                                         \
+  Serial.print(result->item##_x);                                              \
+  Serial.print(",");                                                           \
+  Serial.print(result->item##_y);                                              \
+  Serial.println(")");
+
 void setup() {
   Serial.begin(115200);
   Wire.begin();
@@ -38,30 +45,48 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
+  while (!huskylens.getResult(ALGORITHM_POSE_RECOGNITION)) {
     delay(100);
   }
 
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
+  while (huskylens.available(ALGORITHM_POSE_RECOGNITION)) {
+    PoseResult *result = static_cast<PoseResult *>(
+        huskylens.popCachedResult(ALGORITHM_POSE_RECOGNITION));
 
     Serial.print("result->ID=");
-    Serial.println(result->ID);
+    Serial.println(result->ID, HEX);
 
     Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
+    Serial.print(result->xCenter, HEX);
     Serial.print(",");
-    Serial.print(result->yCenter);
+    Serial.print(result->yCenter, HEX);
     Serial.println(")");
 
-    Serial.println(result->width);
+    Serial.println(result->width, HEX);
     Serial.print("result->height=");
-    Serial.println(result->height);
+    Serial.println(result->height, HEX);
     Serial.print("result->name=");
     Serial.println(result->name);
     Serial.print("result->content=");
     Serial.println(result->content);
+
+    PRINT_ITEM(nose);
+    PRINT_ITEM(leye);
+    PRINT_ITEM(reye);
+    PRINT_ITEM(lear);
+    PRINT_ITEM(rear);
+    PRINT_ITEM(lshoulder);
+    PRINT_ITEM(rshoulder);
+    PRINT_ITEM(lelbow);
+    PRINT_ITEM(relbow);
+    PRINT_ITEM(lwrist);
+    PRINT_ITEM(rwrist);
+    PRINT_ITEM(lhip);
+    PRINT_ITEM(rhip);
+    PRINT_ITEM(lknee);
+    PRINT_ITEM(rknee);
+    PRINT_ITEM(lankle);
+    PRINT_ITEM(rankle);
   }
   delay(1000);
 }

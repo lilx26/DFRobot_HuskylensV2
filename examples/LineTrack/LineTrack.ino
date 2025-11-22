@@ -19,7 +19,7 @@
  2.This code is tested on Arduino Uno, Leonardo, Mega boards.
  ****************************************************/
 
-#include "DFRobot_HuskylensV2.h"
+#include <DFRobot_HuskylensV2.h>
 
 // HUSKYLENS green line >> SDA; blue line >> SCL
 HuskylensV2 huskylens;
@@ -38,30 +38,31 @@ void setup() {
 }
 
 void loop() {
-  while (!huskylens.getResult(ALGORITHM_ANY)) {
+  while (!huskylens.getResult(ALGORITHM_LINE_TRACKING)) {
     delay(100);
   }
+  Serial.println("\n\n\n\n");
+  while (huskylens.available(ALGORITHM_LINE_TRACKING)) {
+    Result *result = static_cast<Result *>(
+        huskylens.popCachedResult(ALGORITHM_LINE_TRACKING));
+    Serial.println("------------------------------");
+    Serial.print("result->ID=0x");
+    Serial.println(result->ID, HEX);
 
-  while (huskylens.available(ALGORITHM_ANY)) {
-    Result *result =
-        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
+    Serial.print("result->level=");
+    Serial.println(result->level);
 
-    Serial.print("result->ID=");
-    Serial.println(result->ID);
-
-    Serial.print("result->Center=(");
-    Serial.print(result->xCenter);
+    Serial.print("vector=(");
+    Serial.print(result->xTarget);
     Serial.print(",");
     Serial.print(result->yCenter);
     Serial.println(")");
 
-    Serial.println(result->width);
-    Serial.print("result->height=");
-    Serial.println(result->height);
-    Serial.print("result->name=");
-    Serial.println(result->name);
-    Serial.print("result->content=");
-    Serial.println(result->content);
+    Serial.print("result->angle=");
+    Serial.println(result->angle);
+
+    Serial.print("result->length=");
+    Serial.println(result->length);
   }
   delay(1000);
 }
