@@ -929,18 +929,11 @@ String ProtocolV2::getAlgoParamString(eAlgorithm_t algo, String key) {
   return ret;
 }
 
-bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
+bool ProtocolV2::updateAlgoParams(eAlgorithm_t algo) {
   DBG("\n");
   bool ret = false;
-  uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
-  husky_lens_protocol_write_uint8(1);
-  husky_lens_protocol_write_uint8(0);
-
-  husky_lens_protocol_write_int16(value);
-  husky_lens_protocol_write_zero_bytes(6);
-  husky_lens_protocol_write_uint8(key.length());
-  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  uint8_t *buffer = husky_lens_protocol_write_begin(
+      algo, COMMAND_ACTION_UPDATE_ALGORITHM_PARAMS);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -958,11 +951,18 @@ bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
   return ret;
 }
 
-bool ProtocolV2::updateAlgoParams(eAlgorithm_t algo) {
+bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
   DBG("\n");
   bool ret = false;
-  uint8_t *buffer = husky_lens_protocol_write_begin(
-      algo, COMMAND_ACTION_UPDATE_ALGORITHM_PARAMS);
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
+  husky_lens_protocol_write_uint8(1);
+  husky_lens_protocol_write_uint8(0);
+
+  husky_lens_protocol_write_int16(value);
+  husky_lens_protocol_write_zero_bytes(6);
+  husky_lens_protocol_write_uint8(key.length());
+  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
