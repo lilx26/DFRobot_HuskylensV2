@@ -291,18 +291,24 @@ Result *HuskylensV2::getBranch(eAlgorithm_t algo, int16_t index) {
 bool HuskylensV2::switchAlgorithm(eAlgorithm_t algo) {
   DBG("\n");
   bool ret;
+
+#ifdef LARGE_MEMORY
   customAlgoNum = 0;
+
   customId[0] = 0;
   customId[1] = 0;
   customId[2] = 0;
+#endif
 
   ret = ProtocolV2::switchAlgorithm(algo);
+#ifdef LARGE_MEMORY
   if (ret) {
     if (algo >= ALGORITHM_CUSTOM_BEGIN) {
       customAlgoNum = 1;
       customId[customAlgoNum++] = algo;
     }
   }
+#endif
   return ret;
 }
 
