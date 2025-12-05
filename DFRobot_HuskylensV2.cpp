@@ -98,10 +98,10 @@ Result *HuskylensV2::popCachedResult(eAlgorithm_t algo) {
 
 #ifdef LARGE_MEMORY
 eAlgorithm_t HuskylensV2::toRealID(uint8_t id) {
-  eAlgorithm_t algo = ALGORITHM_ANY;
+  eAlgorithm_t algo = (eAlgorithm_t)id;
   if (id >= ALGORITHM_CUSTOM_BEGIN) {
     for (uint8_t i = 0; i < CUSTOM_ALGORITHM_COUNT; i++)
-      if (customId[i] == algo) {
+      if (customId[i] == id) {
         algo = (eAlgorithm_t)((int)ALGORITHM_CUSTOM0 + i);
         break;
       }
