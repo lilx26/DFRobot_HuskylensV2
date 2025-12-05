@@ -41,6 +41,8 @@ void setup() {
     Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
     delay(100);
   }
+  huskylens.switchAlgorithm(ALGORITHM_GAZE_RECOGNITION);
+  delay(5000);
 }
 
 void loop() {
@@ -61,7 +63,8 @@ void loop() {
     Serial.println(result->yaw);
 
     // Azimuth: the horizontal projection angle.
-    // 0 degrees points to the right side of the screen, increasing counterclockwise.
+    // 0 degrees points to the right side of the screen, increasing
+    // counterclockwise.
     Serial.print("result->azimuth=");
     Serial.println(result->azimuth);
     // The spatial unit length is 432. 'length' is the projected length.

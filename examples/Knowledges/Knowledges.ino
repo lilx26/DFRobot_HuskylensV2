@@ -35,11 +35,13 @@ void setup() {
     Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
     delay(100);
   }
+  huskylens.switchAlgorithm(ALGORITHM_OBJECT_RECOGNITION);
+  delay(5000);
 }
 
 void loop() {
   huskylens.saveKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-  delay(2000);
+  delay(5000);
   huskylens.loadKnowledges(ALGORITHM_OBJECT_RECOGNITION, 1);
-  delay(2000);
+  delay(5000);
 }

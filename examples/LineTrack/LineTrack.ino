@@ -39,6 +39,8 @@ void setup() {
     Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
     delay(100);
   }
+  huskylens.switchAlgorithm(ALGORITHM_LINE_TRACKING);
+  delay(5000);
 }
 
 void loop() {
