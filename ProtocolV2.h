@@ -21,7 +21,7 @@ public:
   uint8_t learn(eAlgorithm_t algo);
   uint8_t learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width,
                      int16_t height);
-  bool forgot(eAlgorithm_t algo);
+  bool forget(eAlgorithm_t algo);
   bool switchAlgorithm(eAlgorithm_t algo);
   String takePhoto(eResolution_t resolution = RESOLUTION_1280x720);
   String takeScreenshot();
@@ -53,6 +53,10 @@ public:
   bool setAlgoParamFloat(eAlgorithm_t algo, String key, float value);
   bool setAlgoParamString(eAlgorithm_t algo, String key, String value);
   bool updateAlgoParams(eAlgorithm_t algo);
+  bool startRecording(eMediaType_t mediaType, int16_t duration = -1,
+                      String filename = "",
+                      eResolution_t resolution = RESOLUTION_DEFAULT);
+  bool stopRecording(eMediaType_t mediaType);
 
 public:
   int16_t maxID;
@@ -63,7 +67,7 @@ public:
   int16_t retry = 5;
   TwoWire *wire = NULL;
   Stream *stream = NULL;
-  unsigned long timeOutDuration = 2000;
+  unsigned long timeOutDuration = 5000;
   unsigned long timeOutTimer;
 };
 

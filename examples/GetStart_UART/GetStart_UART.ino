@@ -2,9 +2,14 @@
  HUSKYLENS V2 An Easy-to-use AI Machine Vision Sensor
  <https://www.dfrobot.com/product-1922.html>
 
+ This example demonstrates the basic functionality of the HUSKYLENS V2 library
+ via UART interface. It shows how to initialize the sensor with board-specific
+ UART configurations (including SoftwareSerial for Arduino Uno/Nano), establish
+ communication, and retrieve detection results from any active algorithm
+ (ALGORITHM_ANY). The example prints out detected object properties including
+ ID, center coordinates, width, height, name, and content in hexadecimal format
+ for coordinate and dimension values.
  ***************************************************
- This example shows the basic function of library for HUSKYLENS V2 via I2c.
-
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
 
@@ -16,7 +21,8 @@
 /***********Notice and Trouble shooting***************
  1.Connection and Diagram can be found here
  <https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336#target_23>
- 2.This code is tested on Arduino Uno, Leonardo, Mega boards.
+ 2.This code is tested on Arduino Uno, Leonardo, Mega, Microbit,ESP8266,ESP32
+ boards.
  ****************************************************/
 
 #include <DFRobot_HuskylensV2.h>
@@ -29,7 +35,7 @@ HuskylensV2 huskylens;
 SoftwareSerial Serial1(10, 11); // RX, TX
 #define BAUDRATE 9600
 #elif defined(ESP32)
-#define BAUDRATE  115200
+#define BAUDRATE 115200
 #define RX_PIN_P0 1
 #define TX_PIN_P1 2
 #else
@@ -37,47 +43,49 @@ SoftwareSerial Serial1(10, 11); // RX, TX
 #endif
 
 void setup() {
-    Serial.begin(115200);
+  Serial.begin(115200);
 #ifdef ARDUINO_ARCH_AVR
-    Serial1.begin(BAUDRATE);
+  Serial1.begin(BAUDRATE);
 #elif defined(ESP32)
-    Serial1.begin(BAUDRATE, SERIAL_8N1, RX_PIN_P0, TX_PIN_P1);
+  Serial1.begin(BAUDRATE, SERIAL_8N1, RX_PIN_P0, TX_PIN_P1);
 #else
 #endif
 
-    while (!huskylens.begin(Serial1)) {
-        Serial.println(F("Begin failed!"));
-        Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (System Settings>>Protocol Type>> I2C/UART)"));
-        Serial.println(F("2.Please recheck the connection."));
-        Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
-        delay(100);
-    }
+  while (!huskylens.begin(Serial1)) {
+    Serial.println(F("Begin failed!"));
+    Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS "
+                     "(System Settings>>Protocol Type>> I2C/UART)"));
+    Serial.println(F("2.Please recheck the connection."));
+    Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
+    delay(100);
+  }
 }
 
 void loop() {
-    while (!huskylens.getResult(ALGORITHM_ANY)) {
-        delay(100);
-    }
+  while (!huskylens.getResult(ALGORITHM_ANY)) {
+    delay(100);
+  }
 
-    while (huskylens.available(ALGORITHM_ANY)) {
-        Result *result = static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
+  while (huskylens.available(ALGORITHM_ANY)) {
+    Result *result =
+        static_cast<Result *>(huskylens.popCachedResult(ALGORITHM_ANY));
 
-        Serial.print("result->ID=");
-        Serial.println(result->ID, HEX);
+    Serial.print("result->ID=");
+    Serial.println(result->ID, HEX);
 
-        Serial.print("result->Center=(");
-        Serial.print(result->xCenter, HEX);
-        Serial.print(",");
-        Serial.print(result->yCenter, HEX);
-        Serial.println(")");
+    Serial.print("result->Center=(");
+    Serial.print(result->xCenter, HEX);
+    Serial.print(",");
+    Serial.print(result->yCenter, HEX);
+    Serial.println(")");
 
-        Serial.println(result->width, HEX);
-        Serial.print("result->height=");
-        Serial.println(result->height, HEX);
-        Serial.print("result->name=");
-        Serial.println(result->name);
-        Serial.print("result->content=");
-        Serial.println(result->content);
-    }
-    delay(1000);
+    Serial.println(result->width, HEX);
+    Serial.print("result->height=");
+    Serial.println(result->height, HEX);
+    Serial.print("result->name=");
+    Serial.println(result->name);
+    Serial.print("result->content=");
+    Serial.println(result->content);
+  }
+  delay(1000);
 }

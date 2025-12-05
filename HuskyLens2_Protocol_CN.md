@@ -2,7 +2,7 @@
 | 版本 | 日期  | 发布人  | 邮箱 | 说明 |
 | :--: | :----: | :--: | :----: | :----: |
 | V0.1 | 2025-11-07  | 王辉  | ouki.wang@dfrobot.com | 初始版本 |
-| V0.2 |   | 王辉  | ouki.wang@dfrobot.com | 1. 添加获取读写算法参数api<br/>2.  删除RETURN_OK，统一使用RETURN_ARGS |
+| V0.2 | 2025-11-26 | 王辉  | ouki.wang@dfrobot.com | 1. 添加获取读写算法参数api<br/>2.  删除RETURN_OK，统一使用RETURN_ARGS<br/>3.  修改命令号，算法号<br/> 4.  将设置矩形的x1 y1 x2 y2改为x y widht height<br/> |
 
 ## 通用命令/响应
 | Head55 | HeadAA  | CMD  | Data Length | Data | Checksum |
@@ -14,25 +14,25 @@
 | :--: | :----: | :--: |
 | 0 | 通用ID（None） | 用于握手，切换算法等通用命令  |
 | 1 | 人脸识别（FACE_RECOGNITION） | 有五官数据 |
-| 2 | 物体追踪（OBJECT_TRACKING） |  |
-| 3 | 物体识别（OBJECT_RECOGNITION） |  |
-| 4 | 巡线（LINE_TRACKING） |  |
-| 5 | 颜色识别（COLOR_RECOGNITION） |  |
-| 6 | 标签识别（TAG_RECOGNITION） |  |
-| 7 | 自学习分类（SELF_LEARNING_CLASSIFICATION） |  |
-| 8 | 光学字符识别（OCR_RECOGNITION） |  |
-| 9 | 车牌识别（LICENSE_RECOGNITION） |  |
-| 10 | 二维码（QRCODE_RECOGNITION） |  |
-| 11 | 条形码（BARCODE_RECOGNITION） |  |
-| 12 | 表情识别（EMOTION_RECOGNITION） |  |
-| 13 | 姿态识别（POSE_RECOGNITION） | 有人体关键点数据 |
-| 14 | 手势识别（HAND_RECOGNITION） | 有手指关键点数据 |
-| 15 | 物体分类（OBJECT_CLASSIFICATION） |  |
-| 16 | RFU |  |
-| 17 | 注视方向（GAZE_RECOGNITION） |  |
-| 18 | RFU |  |
+| 2 | 物体识别（OBJECT_RECOGNITION） |  |
+| 3 | 物体追踪（OBJECT_TRACKING） |  |
+| 4 | 颜色识别（COLOR_RECOGNITION） |  |
+| 5 | 物体分类（OBJECT_CLASSIFICATION） |  |
+| 6 | 自学习分类（SELF_LEARNING_CLASSIFICATION） |  |
+| 7 | 实例分割（SEGMENT） |  |
+| 8 | 手势识别（HAND_RECOGNITION） | 有手指关键点数据 |
+| 9 | 姿态识别（POSE_RECOGNITION） | 有人体关键点数据 |
+| 10 | 车牌识别（LICENSE_RECOGNITION） |  |
+| 11 | 光学字符识别（OCR_RECOGNITION） |  |
+| 12 | 巡线（LINE_TRACKING） |  |
+| 13 | 表情识别（EMOTION_RECOGNITION） |  |
+| 14 | 目光注视（GAZE_RECOGNITION） |  |
+| 15 | 面部朝向（FACE_ORIENTATION） |  |
+| 16 | 标签识别（TAG_RECOGNITION） |  |
+| 17 | 条形码（BARCODE_RECOGNITION） |  |
+| 18 | 二维码（QRCODE_RECOGNITION） |  |
 | 19 | 跌倒检测（FALLDOWN_RECOGNITION） |  |
-| 20 | 实例分割（SEGMENT） |  |
+| 20 | RFU |  |
 | 21 | RFU |  |
 | ... | ... |  |
 | 100-127 | 预留 |  |
@@ -44,31 +44,31 @@
 | 0 | 未学习过的ID | 在巡线应用中，默认ID为0，如果学习多种颜色赛道，ID表示学习的颜色ID  |
 | 1-n | 学习过的ID |   |
 
-## clolorID
-| ID | COLOR  | 中文名称  | RGB |
-| :--: | :----: | :--: | :--: |
-| 0 | WHITE  | 白色  | (255, 255, 255) |
-| 1 | RED  | 红色  | (255, 0, 0) |
-| 2 | ORANGE  | 橙色  | (255, 165, 0) |
-| 3 | YELLOW  | 黄色  | (255, 255, 0) |
-| 4 | GREEN  | 绿色  | (0, 255, 0) |
-| 5 | CYAN  | 青色  | (0, 255, 255) |
-| 6 | BLUE  | 蓝色  | (0, 0, 255)|
-| 7 | PURPLE  | 紫色  | (128, 0, 128)|
-| 8 | PINK  | 粉色  | (255, 192, 203)|
-| 9 | GRAY  | 灰色  | (128, 128, 128)|
-| 10 | BLACK  | 黑色  | (0, 0, 0)|
-| 11 | BROWN  | 棕色  | (165, 42, 42)|
-| 12 | OLIVE  | 橄榄绿  | (128, 128, 0)|
-| 13 | TEAL  | 蓝绿色  | (0, 128, 128)|
-| 14 | INDIGO  | 靛蓝色  | (75, 0, 130)|
-| 15 | MAGENTA  | 洋红色  | (255, 0, 255)|
+## 可直接使用的内置Clolor宏
+| COLOR宏 | 中文名称  | RGB |
+| :----: | :--: | :--: |
+| COLOR_WHITE | 白色  | (255, 255, 255) |
+| COLOR_RED | 红色  | (255, 0, 0) |
+| COLOR_ORANGE | 橙色  | (255, 165, 0) |
+| COLOR_YELLOW | 黄色  | (255, 255, 0) |
+| COLOR_GREEN | 绿色  | (0, 255, 0) |
+| COLOR_CYAN | 青色  | (0, 255, 255) |
+| COLOR_BLUE | 蓝色  | (0, 0, 255)|
+| COLOR_PURPLE | 紫色  | (128, 0, 128)|
+| COLOR_PINK | 粉色  | (255, 192, 203)|
+| COLOR_GRAY | 灰色  | (128, 128, 128)|
+| COLOR_BLACK | 黑色  | (0, 0, 0)|
+| COLOR_BROWN | 棕色  | (165, 42, 42)|
+| COLOR_OLIVE | 橄榄绿  | (128, 128, 0)|
+| COLOR_TEAL | 蓝绿色  | (0, 128, 128)|
+| COLOR_INDIGO | 靛蓝色  | (75, 0, 130)|
+| COLOR_MAGENTA | 洋红色  | (255, 0, 255)|
 
-## 1. KNOCK(0x20)
+## 1. KNOCK(0x00)
 和二哈握手，告诉二哈自己是大内存的mcu还是小内存的mcu
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x20  | 1 byte | 10 |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x00  | 1 byte | 10 |10 bytes |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
@@ -78,19 +78,20 @@
 | 0 | 1  | boardType<br/>(0 small ram) <br/>(1 large ram) |
 | 1-9 | 9 | RFU  |
 
-## 2. GET_RESULT(0x21)
+## 2. GET_RESULT(0x01)
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x21  | 1 byte | 0 |1 byte |
+| 0x55 | 0xAA  | 0x01  | 1 byte | 0 |1 byte |
 
-返回命令：RETURN_INFO RETURN_BLOCK... RETURN_ARROW...
+返回命令序列：RETURN_INFO RETURN_BLOCK... RETURN_ARROW...
 
-## 3. GET_ALGO_PARAM(0x22)
+## 3. GET_ALGO_PARAM(0x02)
 获取算法参数
 假设key 的长度为 n
+
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data |Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x22  | 1 byte | 10+n+1 | 10+n+1 bytes |1 byte|
+| 0x55 | 0xAA  | 0x02  | 1 byte | 10+n+1 | 10+n+1 bytes |1 byte|
 
 Data段
 | offset | length  | name  |
@@ -104,15 +105,15 @@ Data段
 | 10 | 1 | key length |
 | 11 | n | key |
 
-## 4. RFU(0x23)
-## 5. RFU(0x24)
-## 6. RFU(0x25)
-## 7. RFU(0x26)
-## 8. SET_ALGORITHM(0x30)
+## 4. RFU(0x03)
+## 5. RFU(0x04)
+## 6. RFU(0x05)
+## 7. RFU(0x06)
+## 8. SET_ALGORITHM(0x0A)
 切换算法
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x30  | 1 byte | 10 |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x0A | 1 byte | 10 |10 bytes |1 byte |
 
 Data段
 | offset | length  | name  |
@@ -126,12 +127,12 @@ Data段
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 9. SET_NAME_BY_ID(0x31)
+## 9. SET_NAME_BY_ID(0x0B)
 根据已学习ID（ID>0）设置名称（假设设置的名称长度为n   0 < n < =32）,支持中文，中文请使用utf-8编码
 
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x31  | 1 byte | 10+1+n |1+n |1 byte |
+| 0x55 | 0xAA  | 0x0B | 1 byte | 10+1+n |1+n |1 byte |
 
 Data段
 | offset | length  | name  |
@@ -147,12 +148,12 @@ Data段
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 10. SET_MULTI_ALGORITHM(0x32)
+## 10. SET_MULTI_ALGORITHM(0x0C)
 创建组合算法，只允许创建一个组合算法，一个组合算法内最多支持3个子算法
 
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x32  | 0 | 10 |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x0C | 0 | 10 |10 bytes |1 byte |
 
 Data段
 | offset | length  | name  |
@@ -166,11 +167,11 @@ Data段
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 11. SET_MULTI_ALGORITHM_RATIO(0x33)
+## 11. SET_MULTI_ALGORITHM_RATIO(0x0D)
 设置组合算法运算比，运算比个数必须和算法个数相同
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x33  | 0 | 10 |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x0D | 0 | 10 |10 bytes |1 byte |
 
 Data段
 | offset | length  | name  |
@@ -184,11 +185,11 @@ Data段
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 12. SET_ALGO_PARAMS(0x34)
+## 12. SET_ALGO_PARAMS(0x0E)
 设置算法参数
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x34  | 1 byte | 10+n+m+2 |10 by+n+m+2 bytes |1 byte |
+| 0x55 | 0xAA  | 0x0E | 1 byte | 10+n+m+2 |10 by+n+m+2 bytes |1 byte |
 
 Data段
 | offset | length  | name  |
@@ -206,11 +207,24 @@ Data段
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 13. RETURN_ARGS(0x45)
+## 12. COMMAND_UPDATE_ALGORITHM_PARAMS(0x0F)
+
+设置算法参数
+
+| Head55 | HeadAA | CMD  | Algo ID | Data Length | Checksum |
+| :----: | :----: | :--: | :-----: | :---------: | :------: |
+|  0x55  |  0xAA  | 0x0F | 1 byte  |      0      |  1 byte  |
+
+返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
+
+
+
+## 13. RETURN_ARGS(0x1A)
+
 返回参数最多4个数字参数和2个string参数
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data |Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x45  | 1 byte | 10或10 + n + m |10 byte|1 byte |
+| 0x55 | 0xAA  | 0x1A | 1 byte | 10或10 + n + m |10 byte|1 byte |
 
 Data段
 | offset | length  | name  |
@@ -227,10 +241,10 @@ Data段
 | 11+n+1 | m | arg0（string） |
 
 
-## 14. RETURN_INFO（0x42）
+## 14. RETURN_INFO（0x1B）
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x42  | 1 byte | 10 |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x1B | 1 byte | 10 |10 bytes |1 byte |
 
 Data段
 | offset | length  | name  |
@@ -246,17 +260,17 @@ Data段
 | 11+n | 1 | arg0（string）length |
 | 11+n+1 | m | arg0（string） |
 
-## 15. RETURN_BLOCKS（0x43）
+## 15. RETURN_BLOCKS（0x1C）
 假设block的name长度n，content长度为m
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x43  | 1 byte | 10+2+n+m+私有数据长度 |10 bytes+私有数据长度 bytes |1 byte |
+| 0x55 | 0xAA  | 0x1C | 1 byte | 10+2+n+m+私有数据长度 |10 bytes+私有数据长度 bytes |1 byte |
 
 Data段
 | offset | length  | name  |
 | :--: | :----: | :--: |
 | 0 | 1 | ID |
-| 1 | 1 | RFU |
+| 1 | 1 | algo id |
 | 2 | 2 | xCenter |
 | 4 | 2 | yCenter |
 | 6 | 2 | width |
@@ -267,10 +281,10 @@ Data段
 | 11+n+1 | m | content |
 |  |  | 算法私有数据 |
 
-## 16. RETURN_ARROWS(0x44)
+## 16. RETURN_ARROWS(0x1D)
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x44  | 1 byte | 10 |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x1D | 1 byte | 10 |10 bytes |1 byte |
 
 Data段
 返回的数据是向量，level 1级别向量的起点是屏幕做下边缘中点（320，480），中垂线为角度0，顺时针旋转可增长到90度，逆时针旋转可减少到-90度。level 2级别的向量起点是level 1级别向量终点。因此支持不同级别向量想加的操作。
@@ -278,81 +292,81 @@ Data段
 | :--: | :----: | :--: |
 | 0 | 1 | ID |
 | 1 | 1 | RFU |
-| 2 | 2 | xCenter |
-| 4 | 2 | yCenter |
+| 2 | 2 | xTarget |
+| 4 | 2 | yTarget |
 | 6 | 2 | angle（-90，90） |
 | 7 | 2 | length |
 
 
 
-## 17. ACTION_TAKE_PHOTO(0x50)
+## 17. ACTION_TAKE_PHOTO(0x20)
 拍照
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x50  | 0 | 0  |1 byte |
+| 0x55 | 0xAA  | 0x20  | 0 | 0  |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 arg0_str 是照片文件名
 
-## 18. ACTION_TAKE_SCREENSHOT(0x51)
+## 18. ACTION_TAKE_SCREENSHOT(0x21)
 截屏
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x51  | 0 | 0  |1 byte |
+| 0x55 | 0xAA  | 0x21 | 0 | 0  |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 arg0_str 是截图文件名
 
-## 19. ACTION_LEARN(0x52)
+## 19. ACTION_LEARN(0x22)
 学习成功，返回ID 非0，学习失败返回ID0
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x52  | 0 | 0  |1 byte |
+| 0x55 | 0xAA  | 0x22 | 0 | 0  |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 arg0_int 是学习id，0 表示为学习到，>=1表示学习的id
 
-## 20. ACTION_FORGOT(0x53)
+## 20. ACTION_FORGET(0x23)
 遗忘所有
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x53  | 0 | 0  |1 byte |
+| 0x55 | 0xAA  | 0x23 | 0 | 0  |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 21. ACTION_SAVE_KNOWLEDGES(0x54)
+## 21. ACTION_SAVE_KNOWLEDGES(0x24)
 保存当前配置到知识库
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length |Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x54  | 1 byte | 10  |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x24  | 1 byte | 10  |10 bytes |1 byte |
 
 Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
-| 0 | 1 | knowLedgesIndex |
+| 0 | 1 | knowLedges_id  range[0, 4] |
 | 1-9 | 9 | RFU |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 22. ACTION_LOAD_KNOWLEDGES(0x55)
+## 22. ACTION_LOAD_KNOWLEDGES(0x25)
 加载知识库
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length |Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x55  | 1 byte | 10  |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x25  | 1 byte | 10  |10 bytes |1 byte |
 
 Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
-| 0 | 1 | knowLedgesIndex |
+| 0 | 1 | knowLedges_id range[0, 4] |
 | 1 | 9 | RFU |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 23. ACTION_DRAW_RECT(0x56)
+## 23. ACTION_DRAW_RECT(0x26)
 画一个矩形
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length |Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x56  | 1 byte | 10  |10 bytes |1 byte |
+| 0x55 | 0xAA  | 0x26  | 1 byte | 10  |10 bytes |1 byte |
 
 Data
 | offset | length  | name  |
@@ -361,25 +375,25 @@ Data
 | 1 | 1 | lineWidth |
 | 2 | 2 | x |
 | 4 | 2 | y |
-| 6 | 2 | w |
-| 8 | 2 | h |
+| 6 | 2 | width |
+| 8 | 2 | height |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 24. ACTION_CLEAN_RECT(0x57)
+## 24. ACTION_CLEAN_RECT(0x27)
 清除所有通过通信协议绘制的矩形
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x57  | 1 byte | 0  |1 byte |
+| 0x55 | 0xAA  | 0x27  | 1 byte | 0  |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 25. ACTION_DRAW_TEXT(0x58)
+## 25. ACTION_DRAW_TEXT(0x28)
 清除所有通过通信协议绘制的文本, 
 如果有背景颜色bgColorID设置为 bgColorIDFixed=bgColorID+256，如果没有背景颜色，bgColorIDFixed
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x58  | 1 byte | 0  |1 byte |
+| 0x55 | 0xAA  | 0x28  | 1 byte | 0  |1 byte |
 
 Data
 | offset | length  | name  |
@@ -388,14 +402,14 @@ Data
 | 1 | 1 | lineWidth |
 | 2 | 2 | x |
 | 4 | 2 | y |
-| 6 | 2 | bgColorIDFixed |
-| 8 | 2 | RFU0 |
+| 6 | 2 | RFU0 |
+| 8 | 2 | RFU1 |
 | 10 | 1 | Text length |
 | 11 | n | text |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 26. ACTION_CLEAN_TEXT(0x59)
+## 26. ACTION_CLEAN_TEXT(0x29)
 清除所有通过通信协议绘制的矩形
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
@@ -403,11 +417,11 @@ Data
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 27. ACTION_PLAY_MUSIC(0x5A)
+## 27. ACTION_PLAY_MUSIC(0x2A)
 播放音频
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Data | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x5A  | 0 | 10+1+n  | 10+1+n bytes | 1byte |
+| 0x55 | 0xAA  | 0x2A | 0 | 10+1+n  | 10+1+n bytes | 1byte |
 
 Data
 | offset | length  | name  |
@@ -423,38 +437,37 @@ Data
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 28. ACTION_EXIT(0x5B)
+## 28. ACTION_EXIT(0x2B)
 退出当前应用，如果当前是在主菜单，则不再退出
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x5B  | 1 byte | 0  |1 byte |
+| 0x55 | 0xAA  | 0x2B | 1 byte | 0  |1 byte |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
-## 29. ACTION_LEARN_BLOCK(0x5C)
-设置学习框的位置和大小【目前只可用于物体追踪】
+## 29. ACTION_LEARN_BLOCK(0x2C)
+设置学习框的位置和大小（目前只可用于物体追踪）
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length |Data| Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |:--: |
-| 0x55 | 0xAA  | 0x5C  | 1 byte | 10  |10 bytes|1 byte |
+| 0x55 | 0xAA  | 0x2C | 1 byte | 10  |10 bytes|1 byte |
 
 Data段
 | offset | length  | name  |
 | :--: | :----: | :--: |
 | 0 | 1 | RFU0 |
 | 1 | 1 | RFU1 |
-| 2 | 2 | x1 |
-| 4 | 2 | y1 |
-| 6 | 2 | x2 |
-| 8 | 2 | y2 |
+| 2 | 2 | x |
+| 4 | 2 | y |
+| 6 | 2 | width |
+| 8 | 2 | height |
 
-返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
-arg0_int 是学习id，0 表示为学习到，>=1表示学习的id
+返回命令：RETURN_ARGS，其中retValue=0表示执行成功，其他值表示执行失败。arg0_int是学习ID，0表示未学习到，>=1表示学习的ID
 
-## 30. ACTION_DRAW_UNIQUE_RECT(0x5D)
+## 30. ACTION_DRAW_UNIQUE_RECT(0x2D)
 画唯一矩形，屏幕上之前绘制的其他矩形会被清除
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length |Data| Checksum |
-| :--: | :----: | :--: | :--: | :--: | :--: |
-| 0x55 | 0xAA  | 0x5D  | 1 byte | 10  |10 bytes|1 byte |
+| :--: | :----: | :--: | :--: | :--: | :--: |:--: |
+| 0x55 | 0xAA  | 0x2D | 1 byte | 10  |10 bytes|1 byte |
 
 Data
 | offset | length  | name  |
@@ -463,12 +476,56 @@ Data
 | 1 | 1 | lineWidth |
 | 2 | 2 | x |
 | 4 | 2 | y |
-| 6 | 2 | w |
-| 8 | 2 | h |
+| 6 | 2 | width |
+| 8 | 2 | height |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
+## 31. ACTION_START_RECORDING(0x2E)
+
+开始录制音频或视频，filename可省略
+
+| Head55 | HeadAA | CMD  | Algo ID | Data Length |   Data   | Checksum |
+| :----: | :----: | :--: | :-----: | :---------: | :------: | :------: |
+|  0x55  |  0xAA  | 0x2E |    0    |     10      | 10 bytes |  1 byte  |
+
+Data
+
+| offset | length |                             name                             |
+| :----: | :----: | :----------------------------------------------------------: |
+|   0    |   1    | 0:              default<br/> 1:           640x480 <br/>2:       1280x720 <br/>3:     1920x1080<br/> |
+|   1    |   1    | 1:           audio<br/> 2:           video <br/>3:      ( audio+video ) |
+|   2    |   2    |                           duration                           |
+|   4    |   2    |                                                              |
+|   6    |   2    |                                                              |
+|   8    |   2    |                                                              |
+|   10   |   1    |                       filename length                        |
+|   11   |   n    |                           filename                           |
+
+返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败，附带文件名或错误信息
+
+
+
+## 32. ACTION_STOP_RECORDING(0x2F)
+
+停止录制音频或视频
+
+| Head55 | HeadAA | CMD  | Algo ID | Data Length |   Data   | Checksum |
+| :----: | :----: | :--: | :-----: | :---------: | :------: | :------: |
+|  0x55  |  0xAA  | 0x2F |    0    |     10      | 10 bytes |  1 byte  |
+
+Data
+
+| offset | length |                             name                             |
+| :----: | :----: | :----------------------------------------------------------: |
+|   0    |   1    |                              0                               |
+|   1    |   1    | 1:           audio<br/> 2:           video <br/>3:      ( audio+video ) |
+|   2    |   8    |                              0                               |
+
+返回命令：RETURN_ARGS，其中retValue=0表示执行成功，其他值表示执行失败，附带文件名或错误信息
+
 # 私有数据
+
 ## 人脸私有数据
 | offset | length  | name  |
 | :--: | :----: | :--: |

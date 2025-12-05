@@ -22,6 +22,17 @@ logging.basicConfig(
 LCD_WIDTH = 640
 LCD_HEIGHT = 480
 
+
+RESOLUTION_DEFAULT = 0
+RESOLUTION_640x480 = 1
+RESOLUTION_1280x720 = 2
+RESOLUTION_1920x1080 = 3
+
+MEDIA_TYPE_AUDIO = 1
+MEDIA_TYPE_VIDEO = 2
+MEDIA_TYPE_VIDEO_AUDIO = 3
+
+
 COLOR_WHITE = 0xFFFFFF   # 白色
 COLOR_RED = 0xFF0000     # 红色
 COLOR_ORANGE = 0xFFA500  # 橙色
@@ -61,18 +72,18 @@ COMMAND_SET_NAME_BY_ID = 0x0B
 COMMAND_SET_MULTI_ALGORITHM = 0x0C
 COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x0D
 COMMAND_SET_ALGO_PARAMS = 0x0E
+COMMAND_UPDATE_ALGORITHM_PARAMS   = 0x0F,
 
-
-COMMAND_RETURN_ARGS = 0x10
-COMMAND_RETURN_INFO = 0x11
-COMMAND_RETURN_BLOCK = 0x12
-COMMAND_RETURN_ARROW = 0x13
+COMMAND_RETURN_ARGS = 0x1A
+COMMAND_RETURN_INFO = 0x1B
+COMMAND_RETURN_BLOCK = 0x1C
+COMMAND_RETURN_ARROW = 0x1D
 
 
 COMMAND_ACTION_TAKE_PHOTO = 0x20
 COMMAND_ACTION_TAKE_SCREENSHOT = 0x21
 COMMAND_ACTION_LEARN = 0x22
-COMMAND_ACTION_FORGOT = 0x23
+COMMAND_ACTION_FORGET = 0x23
 COMMAND_ACTION_SAVE_KNOWLEDGES = 0x24
 COMMAND_ACTION_LOAD_KNOWLEDGES = 0x25
 COMMAND_ACTION_DRAW_RECT = 0x26
@@ -83,8 +94,8 @@ COMMAND_ACTION_PLAY_MUSIC = 0x2A
 COMMAND_EXIT = 0x2B
 COMMAND_ACTION_LEARN_BLOCK = 0x2C
 COMMAND_ACTION_DRAW_UNIQUE_RECT = 0x2D
-COMMAND_ACTION_UPDATE_ALGORITHM_PARAMS = 0x2E
-
+COMMAND_ACTION_START_RECORDING  = 0x2E
+COMMAND_ACTION_STOP_RECORDING   = 0x2F
 
 ALGORITHM_ANY = 0
 ALGORITHM_FACE_RECOGNITION = 1
@@ -549,7 +560,7 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_end()
         
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
-        return ret;
+        return ret
     
     def switchAlgorithm(self,algo):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
@@ -558,10 +569,10 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_end();
       
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
-        return ret;
+        return ret
 
     def takePhoto(self,resolution):
-        resolutions = {"640x480":0, "1280x720":1, "1920x1080":2}
+        resolutions = {"default":RESOLUTION_DEFAULT, "640x480":RESOLUTION_640x480, "1280x720":RESOLUTION_1280x720, "1920x1080":RESOLUTION_1920x1080}
         if resolution not in resolutions:
             return ""
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_PHOTO)
@@ -591,7 +602,7 @@ class ProtocolV2(object):
         return argInt[0] if argInt else 0
 
     def forget(self,algo):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_FORGOT)
+        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_FORGET)
         self.husky_lens_protocol_write_end()
 
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
@@ -794,6 +805,29 @@ class ProtocolV2(object):
                 if argStr:
                     params[k]=argStr[0]
         return params
+
+    def startRecording(self, mediaType : int, duration : int, filename:str="",resolution : int=RESOLUTION_DEFAULT):
+        self.husky_lens_protocol_write_begin(0, COMMAND_ACTION_START_RECORDING);
+        self.husky_lens_protocol_write_uint8(resolution)
+        self.husky_lens_protocol_write_uint8(mediaType)
+        self.husky_lens_protocol_write_int16(duration)
+        self.husky_lens_protocol_write_zero_bytes(6)
+        self.husky_lens_protocol_write_string(filename)
+        self.husky_lens_protocol_write_end()
+        
+        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        return ret
+
+    def stopRecording(self, mediaType : int):
+        self.husky_lens_protocol_write_begin(0, COMMAND_ACTION_STOP_RECORDING);
+        self.husky_lens_protocol_write_uint8(0)
+        self.husky_lens_protocol_write_uint8(mediaType)
+        self.husky_lens_protocol_write_zero_bytes(8)
+        self.husky_lens_protocol_write_end()
+        
+        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        return ret
+
 
     def executeCommand(self, wait_cmd):
         for _ in range(0,3):

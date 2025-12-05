@@ -1,5 +1,0 @@
-{
-    "C_Cpp.clang_format_path": "clang-format",
-    "C_Cpp.clang_format_style": "{     BasedOnStyle: LLVM,     IndentWidth: 4,     UseTab: Never,     AlignConsecutiveAssignments: true,     AlignConsecutiveDeclarations: true,     AlignConsecutiveMacros: true,     BreakBeforeBraces: Attach,     AllowShortFunctionsOnASingleLine: Empty,     ColumnLimit: 0,     SortIncludes: false }",
-    "C_Cpp.clang_format_sortIncludes": false
-}

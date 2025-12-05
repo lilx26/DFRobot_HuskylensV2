@@ -3,9 +3,10 @@
  <https://www.dfrobot.com/product-1922.html>
 
  ***************************************************
- This example shows how to use HUSKYLENS V2's learn and forget functions via I2C
- for face recognition algorithm, including learning objects, forgetting learned
- objects, and learning specific regions of interest.
+ This example demonstrates how to record video with HUSKYLENS
+ V2 via I2C interface. The code initializes the device and shows how to use
+ startRecording() and stopRecording() functions to record video files with
+ different durations.
 
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
@@ -18,7 +19,8 @@
 /***********Notice and Trouble shooting***************
  1.Connection and Diagram can be found here
  <https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336#target_23>
- 2.This code is tested on Arduino Uno, Leonardo, Mega boards.
+ 2.This code is tested on Arduino Uno, Leonardo, Mega, Microbit,ESP8266,ESP32
+ boards.
  ****************************************************/
 
 #include "DFRobot_HuskylensV2.h"
@@ -37,29 +39,26 @@ void setup() {
     Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
     delay(100);
   }
+  bool ret = huskylens.switchAlgorithm((eAlgorithm_t)(128));
+  delay(5000);
 }
 
 void loop() {
-  uint8_t id = 0;
-  bool ret;
-  id = huskylens.learn(ALGORITHM_FACE_RECOGNITION);
-  Serial.print("learn id=");
-  Serial.println(id);
-  delay(10000);
-
-  ret = huskylens.forget(ALGORITHM_FACE_RECOGNITION);
-  Serial.print("forget ret=");
+  bool ret = huskylens.startRecording(MEDIA_TYPE_VIDEO, 8, "test8s.mp4");
+  Serial.print("startRecording test8s.mp4 ret=");
   Serial.println(ret);
-  delay(10000);
+  delay(12 * 1000);
 
-  // huskylens.drawUniqueRect(COLOR_GREEN, 1, 160, 120, 320, 240);
-  id = huskylens.learnBlock(ALGORITHM_FACE_RECOGNITION, 160, 120, 320, 240);
-  Serial.print("learnBlock id=");
-  Serial.println(id);
-  delay(10000);
-
-  ret = huskylens.forget(ALGORITHM_FACE_RECOGNITION);
-  Serial.print("forget ret=");
+  ret = huskylens.startRecording(MEDIA_TYPE_VIDEO, 0, "test5s.mp4");
+  Serial.print("startRecording test5s.mp4 ret=");
   Serial.println(ret);
-  delay(10000);
+  delay(5000);
+
+  ret = huskylens.stopRecording(MEDIA_TYPE_VIDEO);
+  Serial.print("stopRecording ret=");
+  Serial.println(ret);
+  delay(5000);
+  while (1) {
+    delay(100);
+  }
 }

@@ -3,7 +3,11 @@
  <https://www.dfrobot.com/product-1922.html>
 
  ***************************************************
- This example shows the basic function of library for HUSKYLENS V2 via I2c.
+ This example demonstrates the line tracking functionality of HUSKYLENS V2 via
+ I2C interface. It initializes the device, detects lines and paths, and prints
+ detailed tracking information including line ID, level, vector coordinates,
+ angle, and length, which can be used for robot navigation and path following
+ applications.
 
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
@@ -47,7 +51,7 @@ void loop() {
         huskylens.popCachedResult(ALGORITHM_LINE_TRACKING));
     Serial.println("------------------------------");
     Serial.print("result->ID=0x");
-    Serial.println(result->ID, HEX);
+    Serial.println(result->ID);
 
     Serial.print("result->level=");
     Serial.println(result->level);

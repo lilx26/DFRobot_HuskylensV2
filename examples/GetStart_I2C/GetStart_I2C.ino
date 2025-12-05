@@ -2,9 +2,12 @@
  HUSKYLENS V2 An Easy-to-use AI Machine Vision Sensor
  <https://www.dfrobot.com/product-1922.html>
 
+ This example demonstrates the basic functionality of the HUSKYLENS V2 library
+ via I2C interface. It shows how to initialize the sensor, establish
+ communication, and retrieve detection results from any active algorithm
+ (ALGORITHM_ANY). The example prints out detected object properties including
+ ID, center coordinates, width, height, name, and content.
  ***************************************************
- This example shows the basic function of library for HUSKYLENS V2 via I2c.
-
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
 
@@ -16,7 +19,8 @@
 /***********Notice and Trouble shooting***************
  1.Connection and Diagram can be found here
  <https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336#target_23>
- 2.This code is tested on Arduino Uno, Leonardo, Mega boards.
+ 2.This code is tested on Arduino Uno, Leonardo, Mega, Microbit,ESP8266,ESP32
+ boards.
  ****************************************************/
 
 #include "DFRobot_HuskylensV2.h"

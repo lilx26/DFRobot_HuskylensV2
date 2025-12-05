@@ -162,12 +162,12 @@ bool learn(eAlgorithm_t algo);
 bool learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
- * @fn forgot
+ * @fn forget
  * @brief 忘记特定算法的所有已学习对象
  * @param algo 要忘记已学习对象的算法
  * @return 忘记成功返回true，否则返回false
  */
-bool forgot(eAlgorithm_t algo);
+bool forget(eAlgorithm_t algo);
 
 /**
  * @fn saveKnowledges

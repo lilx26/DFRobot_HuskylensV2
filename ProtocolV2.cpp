@@ -189,7 +189,7 @@ void ProtocolV2::protocolWrite(uint8_t *buffer, int length) {
     DBG_PRINTLN("-->");
     DBG_HEX_ARRAY(buffer, length);
     DBG_PRINT("\n");
-    timeOutDuration = 2000;
+    timeOutDuration = 5000;
     wire->setClock(100000);
     wire->beginTransmission(0x50);
     wire->write(buffer, length);
@@ -582,11 +582,11 @@ uint8_t ProtocolV2::learn(eAlgorithm_t algo) {
   return 0;
 }
 
-bool ProtocolV2::forgot(eAlgorithm_t algo) {
+bool ProtocolV2::forget(eAlgorithm_t algo) {
   DBG("\n");
   bool ret = false;
   uint8_t *buffer =
-      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_FORGOT);
+      husky_lens_protocol_write_begin(algo, COMMAND_ACTION_FORGET);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -858,8 +858,8 @@ bool ProtocolV2::getAlgoParamBool(eAlgorithm_t algo, String key) {
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
   husky_lens_protocol_write_zero_bytes(10);
-  husky_lens_protocol_write_uint8(key.length());
   husky_lens_protocol_write_string(key);
+  husky_lens_protocol_write_uint8(0);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -873,10 +873,10 @@ bool ProtocolV2::getAlgoParamBool(eAlgorithm_t algo, String key) {
           ret = true;
         }
       }
-      return ret;
+      break;
     }
   }
-  return false;
+  return ret;
 }
 
 float ProtocolV2::getAlgoParamFloat(eAlgorithm_t algo, String key) {
@@ -885,8 +885,8 @@ float ProtocolV2::getAlgoParamFloat(eAlgorithm_t algo, String key) {
   uint8_t *buffer =
       husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
   husky_lens_protocol_write_zero_bytes(10);
-  husky_lens_protocol_write_uint8(key.length());
-  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  husky_lens_protocol_write_string(key);
+  husky_lens_protocol_write_uint8(0);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -911,6 +911,7 @@ String ProtocolV2::getAlgoParamString(eAlgorithm_t algo, String key) {
       husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
   husky_lens_protocol_write_zero_bytes(10);
   husky_lens_protocol_write_string(key);
+  husky_lens_protocol_write_uint8(0);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -932,8 +933,8 @@ String ProtocolV2::getAlgoParamString(eAlgorithm_t algo, String key) {
 bool ProtocolV2::updateAlgoParams(eAlgorithm_t algo) {
   DBG("\n");
   bool ret = false;
-  uint8_t *buffer = husky_lens_protocol_write_begin(
-      algo, COMMAND_ACTION_UPDATE_ALGORITHM_PARAMS);
+  uint8_t *buffer =
+      husky_lens_protocol_write_begin(algo, COMMAND_UPDATE_ALGORITHM_PARAMS);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -945,7 +946,7 @@ bool ProtocolV2::updateAlgoParams(eAlgorithm_t algo) {
       if (packet->retValue == 0) {
         ret = true;
       }
-      return ret;
+      break;
     }
   }
   return ret;
@@ -961,8 +962,8 @@ bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
 
   husky_lens_protocol_write_int16(value);
   husky_lens_protocol_write_zero_bytes(6);
-  husky_lens_protocol_write_uint8(key.length());
-  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  husky_lens_protocol_write_string(key);
+  husky_lens_protocol_write_uint8(0);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -974,7 +975,7 @@ bool ProtocolV2::setAlgoParamBool(eAlgorithm_t algo, String key, bool value) {
       if (packet->retValue == 0) {
         ret = true;
       }
-      return ret;
+      break;
     }
   }
   return ret;
@@ -993,8 +994,8 @@ bool ProtocolV2::setAlgoParamFloat(eAlgorithm_t algo, String key, float value) {
   husky_lens_protocol_write_int16(value16[1]);
   husky_lens_protocol_write_int16(0);
   husky_lens_protocol_write_int16(0);
-  husky_lens_protocol_write_uint8(key.length());
-  husky_lens_protocol_write_buffer_uint8((uint8_t *)key.c_str(), key.length());
+  husky_lens_protocol_write_string(key);
+  husky_lens_protocol_write_uint8(0);
   int length = husky_lens_protocol_write_end();
 
   for (int i = 0; i < retry; i++) {
@@ -1006,7 +1007,7 @@ bool ProtocolV2::setAlgoParamFloat(eAlgorithm_t algo, String key, float value) {
       if (packet->retValue == 0) {
         ret = true;
       }
-      return ret;
+      break;
     }
   }
   return ret;
@@ -1032,7 +1033,62 @@ bool ProtocolV2::setAlgoParamString(eAlgorithm_t algo, String key,
       if (packet->retValue == 0) {
         ret = true;
       }
-      return ret;
+      break;
+    }
+  }
+  return ret;
+}
+
+bool ProtocolV2::startRecording(eMediaType_t mediaType, int16_t duration,
+                                String filename, eResolution_t resolution) {
+  DBG("\n");
+  bool ret = false;
+  uint8_t *buffer = husky_lens_protocol_write_begin(
+      ALGORITHM_ANY, COMMAND_ACTION_START_RECORDING);
+  husky_lens_protocol_write_uint8(resolution);
+  husky_lens_protocol_write_uint8(mediaType);
+
+  husky_lens_protocol_write_int16(duration);
+  husky_lens_protocol_write_zero_bytes(6);
+  if (filename.length() > 0) {
+    husky_lens_protocol_write_string(filename);
+  }
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        ret = true;
+      }
+      break;
+    }
+  }
+  return ret;
+}
+bool ProtocolV2::stopRecording(eMediaType_t mediaType) {
+  DBG("\n");
+  bool ret = false;
+  uint8_t *buffer = husky_lens_protocol_write_begin(
+      ALGORITHM_ANY, COMMAND_ACTION_STOP_RECORDING);
+  husky_lens_protocol_write_uint8(0);
+  husky_lens_protocol_write_uint8(mediaType);
+  husky_lens_protocol_write_zero_bytes(8);
+  int length = husky_lens_protocol_write_end();
+
+  for (int i = 0; i < retry; i++) {
+    protocolWrite(buffer, length);
+    if (wait(COMMAND_RETURN_ARGS)) {
+      PacketHead_t *head = (PacketHead_t *)receive_buffer;
+      PacketData_t *packet = (PacketData_t *)head->data;
+
+      if (packet->retValue == 0) {
+        ret = true;
+      }
+      break;
     }
   }
   return ret;

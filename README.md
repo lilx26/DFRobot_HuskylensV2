@@ -162,12 +162,12 @@ bool learn(eAlgorithm_t algo);
 bool learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
- * @fn forgot
+ * @fn forget
  * @brief Forget all learned objects for a specific algorithm
  * @param algo The algorithm to forget learned objects for
  * @return true if forgetting is successful, false otherwise
  */
-bool forgot(eAlgorithm_t algo);
+bool forget(eAlgorithm_t algo);
 
 /**
  * @fn saveKnowledges
@@ -195,7 +195,7 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
  * @fn drawRect
  * @brief Draw a rectangle on the HuskyLens display
  * @param algo The algorithm context
- * @param color The color  of the rectangle
+ * @param color The color of the rectangle
  * @param lineWidth The line width of the rectangle
  * @param x The x-coordinate of the top-left corner
  * @param y The y-coordinate of the top-left corner
@@ -206,10 +206,24 @@ bool loadKnowledges(eAlgorithm_t algo, uint8_t knowledgeID);
 bool drawRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth, int16_t x, int16_t y, int16_t width, int16_t height);
 
 /**
+ * @fn drawUniqueRect
+ * @brief Draw a unique rectangle on the HuskyLens display, previous rectangles will be erased automatically
+ * @param algo The algorithm context
+ * @param color The color of the rectangle
+ * @param lineWidth The line width of the rectangle
+ * @param x The x-coordinate of the top-left corner
+ * @param y The y-coordinate of the top-left corner
+ * @param width The width of the rectangle
+ * @param height The height of the rectangle
+ * @return true if drawing is successful, false otherwise
+ */
+bool drawUniqueRect(eAlgorithm_t algo, uint32_t color, uint8_t lineWidth, int16_t x, int16_t y, int16_t width, int16_t height);
+
+/**
  * @fn drawText
  * @brief Draw text on the HuskyLens display
  * @param algo The algorithm context
- * @param color The color  of the text
+ * @param color The color of the text
  * @param fontSize The font size of the text
  * @param x The x-coordinate of the text position
  * @param y The y-coordinate of the text position
@@ -249,6 +263,16 @@ bool clearText(eAlgorithm_t algo);
  * @return true if setting is successful, false otherwise
  */
 bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo2 = ALGORITHM_ANY, eAlgorithm_t algo3 = ALGORITHM_ANY, eAlgorithm_t algo4 = ALGORITHM_ANY);
+
+/**
+ * @fn setMultiAlgorithmRatio
+ * @brief Set the running ratio of multiple algorithms (only available on large memory boards)
+ * @param ratio0 The time occupation ratio of the first algorithm
+ * @param ratio1 The time occupation ratio of the second algorithm
+ * @param ratio2 The time occupation ratio of the third algorithm (default: 0)
+ * @return true if setting is successful, false otherwise
+ */
+bool setMultiAlgorithmRatio(uint8_t ratio0, uint8_t ratio1, uint8_t ratio2 = 0);
 ```
 
 ## Algorithm
@@ -289,8 +313,8 @@ Refer to the table below for the supported algorithms and their result elements.
 
 ## History
 
-- 2025/10/28 - Version 1.0.0 released.
+- 2025/11/08 - Version 1.0.0 released.
 
 ## Credits
 
-Written by YeezB(zibin.ye@dfrobot.com), 2025.10.28 (Welcome to our [website](https://www.dfrobot.com/))
+Written by Ouki.Wang(ouki.wang@dfrobot.com), 2025.11.08 (Welcome to our [website](https://www.dfrobot.com/))

@@ -3,9 +3,9 @@
  <https://www.dfrobot.com/product-1922.html>
 
  ***************************************************
- This example shows how to use HUSKYLENS V2's learn and forget functions via I2C
- for face recognition algorithm, including learning objects, forgetting learned
- objects, and learning specific regions of interest.
+ This example shows how to switch between different recognition algorithms for
+ HUSKYLENS V2 via I2C, including face recognition, object recognition,
+ segmentation, and custom algorithm (ID 128).
 
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
@@ -18,7 +18,8 @@
 /***********Notice and Trouble shooting***************
  1.Connection and Diagram can be found here
  <https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336#target_23>
- 2.This code is tested on Arduino Uno, Leonardo, Mega boards.
+ 2.This code is tested on Arduino Uno, Leonardo, Mega, Microbit,ESP8266,ESP32
+ boards.
  ****************************************************/
 
 #include "DFRobot_HuskylensV2.h"
@@ -37,29 +38,24 @@ void setup() {
     Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
     delay(100);
   }
+  delay(5000);
 }
 
 void loop() {
-  uint8_t id = 0;
-  bool ret;
-  id = huskylens.learn(ALGORITHM_FACE_RECOGNITION);
-  Serial.print("learn id=");
-  Serial.println(id);
-  delay(10000);
-
-  ret = huskylens.forget(ALGORITHM_FACE_RECOGNITION);
-  Serial.print("forget ret=");
+  bool ret = huskylens.switchAlgorithm(ALGORITHM_FACE_RECOGNITION);
+  Serial.print("switch to face recognition ret=");
   Serial.println(ret);
-  delay(10000);
-
-  // huskylens.drawUniqueRect(COLOR_GREEN, 1, 160, 120, 320, 240);
-  id = huskylens.learnBlock(ALGORITHM_FACE_RECOGNITION, 160, 120, 320, 240);
-  Serial.print("learnBlock id=");
-  Serial.println(id);
-  delay(10000);
-
-  ret = huskylens.forget(ALGORITHM_FACE_RECOGNITION);
-  Serial.print("forget ret=");
+  delay(5000);
+  ret = huskylens.switchAlgorithm(ALGORITHM_OBJECT_RECOGNITION);
+  Serial.print("switch to object recognition ret=");
   Serial.println(ret);
-  delay(10000);
+  delay(5000);
+  ret = huskylens.switchAlgorithm(ALGORITHM_SEGMENT);
+  Serial.print("switch to segment ret=");
+  Serial.println(ret);
+  delay(5000);
+  ret = huskylens.switchAlgorithm((eAlgorithm_t)(128));
+  Serial.print("switch to 128 ret=");
+  Serial.println(ret);
+  delay(5000);
 }

@@ -79,12 +79,18 @@
 #define SQUARE(x) ((x) * (x))
 
 typedef enum {
-  RESOLUTION_640x480 = 0,
-  RESOLUTION_1280x720 = 1,
-  RESOLUTION_1920x1080 = 2,
+  RESOLUTION_DEFAULT = 0,
+  RESOLUTION_640x480 = 1,
+  RESOLUTION_1280x720 = 2,
+  RESOLUTION_1920x1080 = 3,
 } eResolution_t;
 
-enum protocolCommand {
+typedef enum {
+  MEDIA_TYPE_AUDIO = 1,
+  MEDIA_TYPE_VIDEO = 2,
+} eMediaType_t;
+
+typedef enum protocolCommand {
   COMMAND_KNOCK = 0x00,
   COMMAND_GET_RESULT = 0x01,
   COMMAND_GET_ALGO_PARAM = 0x02,
@@ -98,18 +104,19 @@ enum protocolCommand {
   COMMAND_SET_MULTI_ALGORITHM = 0x0C,
   COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x0D,
   COMMAND_SET_ALGO_PARAMS = 0x0E,
-  // RFU 0x1F
+  COMMAND_UPDATE_ALGORITHM_PARAMS = 0x0F,
+  // RFU 0x0F - 0x19
 
-  COMMAND_RETURN_ARGS = 0x10,
-  COMMAND_RETURN_INFO = 0x11,
-  COMMAND_RETURN_BLOCK = 0x12,
-  COMMAND_RETURN_ARROW = 0x13,
-  // RFU 0x14 - 0x1F
+  COMMAND_RETURN_ARGS = 0x1A,
+  COMMAND_RETURN_INFO = 0x1B,
+  COMMAND_RETURN_BLOCK = 0x1C,
+  COMMAND_RETURN_ARROW = 0x1D,
+  // RFU 0x1E - 0x1F
 
   COMMAND_ACTION_TAKE_PHOTO = 0x20,
   COMMAND_ACTION_TAKE_SCREENSHOT = 0x21,
   COMMAND_ACTION_LEARN = 0x22,
-  COMMAND_ACTION_FORGOT = 0x23,
+  COMMAND_ACTION_FORGET = 0x23,
   COMMAND_ACTION_SAVE_KNOWLEDGES = 0x24,
   COMMAND_ACTION_LOAD_KNOWLEDGES = 0x25,
   COMMAND_ACTION_DRAW_RECT = 0x26,
@@ -120,9 +127,10 @@ enum protocolCommand {
   COMMAND_EXIT = 0x2B,
   COMMAND_ACTION_LEARN_BLOCK = 0x2C,
   COMMAND_ACTION_DRAW_UNIQUE_RECT = 0x2D,
-  COMMAND_ACTION_UPDATE_ALGORITHM_PARAMS = 0x2E,
-  // RFU 0x2E - 0x2F
-};
+  COMMAND_ACTION_START_RECORDING = 0x2E,
+  COMMAND_ACTION_STOP_RECORDING = 0x2F,
+  // RFU 0x30 - 0x3F
+} eProtocolCommand_t;
 
 typedef enum {
   ALGORITHM_ANY = 0,                      // 0
@@ -207,12 +215,14 @@ typedef struct __attribute__((packed)) {
     uint8_t ID;
     uint8_t maxID;
     uint8_t rfu0;
+    uint8_t resolution;
     uint8_t boardType;
     uint8_t multiAlgoNum;
   };
   union {
     int8_t rfu1;
     int8_t level;
+    int8_t mediaType;
     int8_t retValue;
     int8_t lineWidth;
     int8_t confidence;
@@ -221,6 +231,7 @@ typedef struct __attribute__((packed)) {
     int16_t first;
     int16_t xCenter;
     int16_t xTarget;
+    int16_t duration;
     int16_t algorithmType;
     int16_t classID;
     int16_t total_results;
@@ -237,6 +248,7 @@ typedef struct __attribute__((packed)) {
     int16_t third;
     int16_t width;
     int16_t angle;
+    int16_t azimuth;
     int16_t total_blocks;
     int16_t roll; // eular[2], 沿X轴移动， 横滚角,前后移动
   };

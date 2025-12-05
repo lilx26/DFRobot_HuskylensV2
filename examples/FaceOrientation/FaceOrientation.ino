@@ -3,7 +3,9 @@
  <https://www.dfrobot.com/product-1922.html>
 
  ***************************************************
- This example shows the basic function of library for HUSKYLENS V2 via I2c.
+ This example shows how to use HUSKYLENS V2's face orientation detection
+ algorithm via I2C to detect faces and measure their orientation angles (pitch,
+ yaw, and roll).
 
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
