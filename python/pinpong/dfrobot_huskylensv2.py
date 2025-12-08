@@ -30,7 +30,7 @@ RESOLUTION_1920x1080 = 3
 
 MEDIA_TYPE_AUDIO = 1
 MEDIA_TYPE_VIDEO = 2
-MEDIA_TYPE_VIDEO_AUDIO = 3
+
 
 
 COLOR_WHITE = 0xFFFFFF   # 白色
@@ -72,7 +72,7 @@ COMMAND_SET_NAME_BY_ID = 0x0B
 COMMAND_SET_MULTI_ALGORITHM = 0x0C
 COMMAND_SET_MULTI_ALGORITHM_RATIO = 0x0D
 COMMAND_SET_ALGO_PARAMS = 0x0E
-COMMAND_UPDATE_ALGORITHM_PARAMS   = 0x0F,
+COMMAND_UPDATE_ALGORITHM_PARAMS = 0x0F
 
 COMMAND_RETURN_ARGS = 0x1A
 COMMAND_RETURN_INFO = 0x1B
@@ -346,12 +346,11 @@ class ProtocolV2(object):
         return ret;
 
     def getResult(self, algo):
-        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_GET_RESULT)
+        self.husky_lens_protocol_write_begin(algo, COMMAND_GET_RESULT)
         self.husky_lens_protocol_write_end()
 
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_INFO)
         if ret == False:
-            time.sleep(1)
             return None
         if self.receive_index != CONTENT_INDEX + 10:
             return None
@@ -401,6 +400,7 @@ class ProtocolV2(object):
                 ret = Result(self.receive_buffer[0:L])
 
             self.result[algo]["blocks"].append(ret)
+        return self.result[algo]["info"].total_results
 
     def wait(self, command):
         receiving = True
@@ -558,10 +558,11 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(width)
         self.husky_lens_protocol_write_int16(height)
         self.husky_lens_protocol_write_end()
+        ret,argInt,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        if not ret:
+            return 0
+        return argInt[0] if argInt else 0
         
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
-        return ret
-    
     def switchAlgorithm(self,algo):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
         self.husky_lens_protocol_write_uint8(algo);
@@ -713,13 +714,13 @@ class ProtocolV2(object):
         return ret
 
     def setMultiAlgorithms(self, algos:list):
-        if len(algos) > 3:
+        if len(algos) > 3 or len(algos) < 2:
             return False
         customAlgoNum = 0;
         self.customId = [None,None,None]
         for algo in algos:
             if algo >= ALGORITHM_CUSTOM_BEGIN:
-                self.customId[customAlgoNum] = algo0
+                self.customId[customAlgoNum] = algo
                 customAlgoNum = + customAlgoNum + 1
 
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM);
@@ -736,6 +737,8 @@ class ProtocolV2(object):
         return ret
 
     def setMultiAlgorithmRatios(self,ratios : list):
+        if len(ratios) > 3 or len(ratios) < 2:
+            return False
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM_RATIO)
         self.husky_lens_protocol_write_uint8(len(ratios))
         self.husky_lens_protocol_write_uint8(0)
@@ -752,13 +755,13 @@ class ProtocolV2(object):
 
     def setAlgorithmParams(self,algo, params={"show_name":False}):
         for k, v in params.items():
-            self.husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS);
+            self.husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS)
            
             if isinstance(v, bool):
                 self.husky_lens_protocol_write_uint8(1);
                 self.husky_lens_protocol_write_uint8(0);
                 self.husky_lens_protocol_write_int16(v);
-                self.husky_lens_protocol_write_zero_bytes(6);
+                self.husky_lens_protocol_write_zero_bytes(6)
                 self.husky_lens_protocol_write_string(k);
             elif isinstance(v, float):
                 float_bytes = struct.pack("<f", v)
@@ -767,10 +770,10 @@ class ProtocolV2(object):
                 self.husky_lens_protocol_write_uint8(0);
                 self.husky_lens_protocol_write_int16(v0);
                 self.husky_lens_protocol_write_int16(v1);
-                self.husky_lens_protocol_write_zero_bytes(4);
+                self.husky_lens_protocol_write_zero_bytes(4)
                 self.husky_lens_protocol_write_string(k);
             elif isinstance(v, str):
-                self.husky_lens_protocol_write_zero_bytes(10);
+                self.husky_lens_protocol_write_zero_bytes(10)
                 self.husky_lens_protocol_write_string(k);
                 self.husky_lens_protocol_write_string(v);
             else:
@@ -781,6 +784,12 @@ class ProtocolV2(object):
             if not ret:
                 return False
         return True
+
+    def updateAlgoParams(self, algo):
+        self.husky_lens_protocol_write_begin(algo, COMMAND_UPDATE_ALGORITHM_PARAMS)
+        self.husky_lens_protocol_write_end()
+        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        return ret
 
     def getAlgorithmParams(self, algo, param_keys):
         params={}

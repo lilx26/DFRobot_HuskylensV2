@@ -29,10 +29,15 @@ class ProtocolThread(threading.Thread):
         while True:
             ret = self.husky.setAlgorithmParams(ALGORITHM_FACE_RECOGNITION,{"show_name":False, "det_thres":0.5})
             logging.info(f"set ret={ret}")
+            ret = self.husky.updateAlgoParams(ALGORITHM_FACE_RECOGNITION)
+            logging.info(f"update ret={ret}")
             params = self.husky.getAlgorithmParams(ALGORITHM_FACE_RECOGNITION,["show_name", "det_thres"])
             logging.info(f"get params={params}")
+
             ret = self.husky.setAlgorithmParams(ALGORITHM_FACE_RECOGNITION,{"show_name":True, "det_thres":0.8})
             logging.info(f"set ret={ret}")
+            ret = self.husky.updateAlgoParams(ALGORITHM_FACE_RECOGNITION)
+            logging.info(f"update ret={ret}")
             params = self.husky.getAlgorithmParams(ALGORITHM_FACE_RECOGNITION,["show_name", "det_thres"])
             logging.info(f"get params={params}")
 
