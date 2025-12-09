@@ -268,10 +268,10 @@ bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo
  * @brief 设置多个算法同时运行（仅适用于大内存开发板）
  * @param ratio0 第一个算法时间占用比
  * @param ratio1 第二个算法时间占用比
- * @param ratio2 第三个算法时间占用比（默认：ALGORITHM_ANY）
+ * @param ratio2 第三个算法时间占用比（默认：0）
  * @return 设置成功返回true，否则返回false
  */
-bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo2 = ALGORITHM_ANY);
+bool setMultiAlgorithmRatio(uint8_t ratio0, uint8_t ratio1, uint8_t ratio2 = 0);
 ```
 
 ## 算法

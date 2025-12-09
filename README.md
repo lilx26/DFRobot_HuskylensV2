@@ -258,11 +258,9 @@ bool clearText(eAlgorithm_t algo);
  * @param algo0 The first algorithm
  * @param algo1 The second algorithm
  * @param algo2 The third algorithm (default: ALGORITHM_ANY)
- * @param algo3 The fourth algorithm (default: ALGORITHM_ANY)
- * @param algo4 The fifth algorithm (default: ALGORITHM_ANY)
  * @return true if setting is successful, false otherwise
  */
-bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo2 = ALGORITHM_ANY, eAlgorithm_t algo3 = ALGORITHM_ANY, eAlgorithm_t algo4 = ALGORITHM_ANY);
+bool setMultiAlgorithm(eAlgorithm_t algo0, eAlgorithm_t algo1, eAlgorithm_t algo2 = ALGORITHM_ANY);
 
 /**
  * @fn setMultiAlgorithmRatio
