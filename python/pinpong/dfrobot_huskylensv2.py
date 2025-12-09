@@ -713,7 +713,7 @@ class ProtocolV2(object):
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def setMultiAlgorithms(self, algos:list):
+    def setMultiAlgorithm(self, algos:list):
         if len(algos) > 3 or len(algos) < 2:
             return False
         customAlgoNum = 0;
@@ -736,7 +736,7 @@ class ProtocolV2(object):
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def setMultiAlgorithmRatios(self,ratios : list):
+    def setMultiAlgorithmRatio(self,ratios : list):
         if len(ratios) > 3 or len(ratios) < 2:
             return False
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM_RATIO)

@@ -27,33 +27,33 @@ class ProtocolThread(threading.Thread):
         while not self.husky.knock():
             time.sleep(0.5)
         while True:
-            ret = self.husky.setMultiAlgorithms([ALGORITHM_FACE_RECOGNITION,
+            ret = self.husky.setMultiAlgorithm([ALGORITHM_FACE_RECOGNITION,
                 ALGORITHM_OBJECT_RECOGNITION,ALGORITHM_SEGMENT])
-            logging.info(f"setMultiAlgorithms ret={ret}")
+            logging.info(f"setMultiAlgorithm ret={ret}")
             time.sleep(5)
             
-            ret = self.husky.setMultiAlgorithmRatios([1,1,1])
-            logging.info(f"setMultiAlgorithmRatios111 ret={ret}")
+            ret = self.husky.setMultiAlgorithmRatio([1,1,1])
+            logging.info(f"setMultiAlgorithmRatio 111 ret={ret}")
             time.sleep(5)
             
-            ret = self.husky.setMultiAlgorithmRatios([0,1,1])
-            logging.info(f"setMultiAlgorithmRatios011 ret={ret}")
+            ret = self.husky.setMultiAlgorithmRatio([0,1,1])
+            logging.info(f"setMultiAlgorithmRatio 011 ret={ret}")
             time.sleep(5)
 
-            ret = self.husky.setMultiAlgorithmRatios([1,1,0])
-            logging.info(f"setMultiAlgorithmRatios110 ret={ret}")
+            ret = self.husky.setMultiAlgorithmRatio([1,1,0])
+            logging.info(f"setMultiAlgorithmRatio 110 ret={ret}")
             time.sleep(5)
             
-            ret = self.husky.setMultiAlgorithmRatios([1,0,0])
-            logging.info(f"setMultiAlgorithmRatios100 ret={ret}")
+            ret = self.husky.setMultiAlgorithmRatio([1,0,0])
+            logging.info(f"setMultiAlgorithmRatio 100 ret={ret}")
             time.sleep(5)
 
-            ret = self.husky.setMultiAlgorithmRatios([0,1,0])
-            logging.info(f"setMultiAlgorithmRatios010 ret={ret}")
+            ret = self.husky.setMultiAlgorithmRatio([0,1,0])
+            logging.info(f"setMultiAlgorithmRatio010 ret={ret}")
             time.sleep(5)
 
-            ret = self.husky.setMultiAlgorithmRatios([0,0,1])
-            logging.info(f"setMultiAlgorithmRatios001 ret={ret}")
+            ret = self.husky.setMultiAlgorithmRatio([0,0,1])
+            logging.info(f"setMultiAlgorithmRatio 001 ret={ret}")
             time.sleep(10)
 
 ProtocolThread().start()
