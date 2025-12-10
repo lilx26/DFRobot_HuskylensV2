@@ -148,9 +148,11 @@ class UnionInt16_0(ctypes.Union):
         ("first", ctypes.c_int16),
         ("xCenter", ctypes.c_int16),
         ("xTarget", ctypes.c_int16),
+        ("duration", ctypes.c_int16),
         ("algorithmType", ctypes.c_int16),
         ("classID", ctypes.c_int16),
         ("total_results", ctypes.c_int16),
+        ("pitch", ctypes.c_int16),
     ]
 
 class UnionInt16_1(ctypes.Union):
@@ -159,6 +161,7 @@ class UnionInt16_1(ctypes.Union):
         ("yCenter", ctypes.c_int16),
         ("yTarget", ctypes.c_int16),
         ("total_results_learned", ctypes.c_int16),
+        ("yaw", ctypes.c_int16),
     ]
 
 class UnionInt16_2(ctypes.Union):
@@ -166,7 +169,9 @@ class UnionInt16_2(ctypes.Union):
         ("third", ctypes.c_int16),
         ("width", ctypes.c_int16),
         ("angle", ctypes.c_int16),
+        ("azimuth", ctypes.c_int16),
         ("total_blocks", ctypes.c_int16),
+        ("roll", ctypes.c_int16),
     ]
 
 class UnionInt16_3(ctypes.Union):
@@ -581,7 +586,6 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_zero_bytes(9)
         self.husky_lens_protocol_write_end()
         ret,_,argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
-        logging.info(f"ret={ret} argStr={argStr}")
         if not ret:
             return ""
         return argStr[0] if argStr else ""
