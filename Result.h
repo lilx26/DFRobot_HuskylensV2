@@ -50,7 +50,7 @@
 
 #include "Wire.h"
 
-#if defined(ESP32) || defined(NRF5) || defined(ESP8266)
+#if defined(ESP32) || defined(NRF5) || defined(ESP8266) || defined(NRF52833)
 #define LARGE_MEMORY 1
 #endif
 
