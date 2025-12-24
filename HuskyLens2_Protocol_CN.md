@@ -253,12 +253,9 @@ Data段
 | 1 | 1 | RFU0 |
 | 2 | 2 | total_results（总识别数目） |
 | 4 | 2 | total_results_learned（已学习的总数目） |
-| 6 | 2 |  |
-| 8 | 2 |  |
-| 10 | 1 | key（string） length |
-| 11 | n |  |
-| 11+n | 1 | arg0（string）length |
-| 11+n+1 | m | arg0（string） |
+| 6 | 2 | total_blocks （总识别block数目）|
+| 8 | 2 | total_blocks_learned （已学习的block总数目）|
+
 
 ## 15. RETURN_BLOCKS（0x1C）
 假设block的name长度n，content长度为m
@@ -270,7 +267,7 @@ Data段
 | offset | length  | name  |
 | :--: | :----: | :--: |
 | 0 | 1 | ID |
-| 1 | 1 | algo id |
+| 1 | 1 | Algo ID |
 | 2 | 2 | xCenter |
 | 4 | 2 | yCenter |
 | 6 | 2 | width |
