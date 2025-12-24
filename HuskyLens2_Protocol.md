@@ -250,12 +250,9 @@ Data
 | 1 | 1 | RFU0 |
 | 2 | 2 | total_results(Total number of identifications) |
 | 4 | 2 | total_results_learned(Total number studied) |
-| 6 | 2 |  |
-| 8 | 2 |  |
-| 10 | 1 | key（string） length |
-| 11 | n |  |
-| 11+n | 1 | arg0（string）length |
-| 11+n+1 | m | arg0（string） |
+| 6 | 2 | total_blocks (Total number of blocks)|
+| 8 | 2 | total_blocks_learned (Total number of blocks studied)|
+
 
 ## 15. RETURN_BLOCKS（0x1C）
 Assume the block's name has length n and its content has length m.
@@ -267,7 +264,7 @@ Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
 | 0 | 1 | ID |
-| 1 | 1 | algo id |
+| 1 | 1 | Algo ID |
 | 2 | 2 | xCenter |
 | 4 | 2 | yCenter |
 | 6 | 2 | width |
