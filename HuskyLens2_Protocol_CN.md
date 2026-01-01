@@ -368,13 +368,17 @@ Data
 Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
-| 0 | 1 | colorID |
+| 0 | 1 | 0 |
 | 1 | 1 | lineWidth |
 | 2 | 2 | x |
 | 4 | 2 | y |
 | 6 | 2 | width |
 | 8 | 2 | height |
-
+| 9 | 1 | 0 |
+| 10 | 1 | 0 |
+| 11 | 1 | color_R |
+| 12 | 1 | color_G |
+| 13 | 1 | color_B |
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
 ## 24. ACTION_CLEAN_RECT(0x27)
@@ -391,18 +395,22 @@ Data
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
 | 0x55 | 0xAA  | 0x28  | 1 byte | 0  |1 byte |
-
+fontSize 只支持[20, 24, 26, 27, 28, 32, 36, 40, 48]
 Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
-| 0 | 1 | colorID |
-| 1 | 1 | lineWidth |
+| 0 | 1 | RFU0 |
+| 1 | 1 | fontSize |
 | 2 | 2 | x |
 | 4 | 2 | y |
-| 6 | 2 | RFU0 |
-| 8 | 2 | RFU1 |
+| 6 | 2 | RFU1 |
+| 8 | 2 | RFU2 |
 | 10 | 1 | Text length |
 | 11 | n | text |
+| 11+n | 1 | 0 |
+| 12+n | 1 | color_R |
+| 13+n | 1 | color_G |
+| 14+n | 1 | color_B |
 
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
