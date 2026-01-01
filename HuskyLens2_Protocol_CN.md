@@ -479,13 +479,17 @@ Data段
 Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
-| 0 | 1 | colorID |
+| 0 | 1 | RFU |
 | 1 | 1 | lineWidth |
 | 2 | 2 | x |
 | 4 | 2 | y |
 | 6 | 2 | width |
 | 8 | 2 | height |
-
+| 9 | 1 | 0 |
+| 10 | 1 | 0 |
+| 11 | 1 | color-R |
+| 12 | 1 | color-G |
+| 13 | 1 | color-B |
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
 ## 31. ACTION_START_RECORDING(0x2E)
