@@ -379,6 +379,7 @@ Data
 | 11 | 1 | color_R |
 | 12 | 1 | color_G |
 | 13 | 1 | color_B |
+
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
 ## 24. ACTION_CLEAN_RECT(0x27)
