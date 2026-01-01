@@ -390,12 +390,13 @@ Data
 返回命令：RETURN_ARGS retValue=0 表示执行成功 其他值表示执行失败
 
 ## 25. ACTION_DRAW_TEXT(0x28)
-清除所有通过通信协议绘制的文本, 
-如果有背景颜色bgColorID设置为 bgColorIDFixed=bgColorID+256，如果没有背景颜色，bgColorIDFixed
+在特定坐标处绘制文本
+fontSize 只支持[20, 24, 26, 27, 28, 32, 36, 40, 48]
+
 | Head55 | HeadAA  | CMD  | Algo ID | Data Length | Checksum |
 | :--: | :----: | :--: | :--: | :--: | :--: |
 | 0x55 | 0xAA  | 0x28  | 1 byte | 0  |1 byte |
-fontSize 只支持[20, 24, 26, 27, 28, 32, 36, 40, 48]
+
 Data
 | offset | length  | name  |
 | :--: | :----: | :--: |
