@@ -83,7 +83,7 @@ class ProtocolThread(threading.Thread):
       #husky.takePhoto()
       #husky.takeScreenshot()
       #husky.learn(ALGORITHM_FACE_RECOGNITION)
-      #husky.forget(ALGORITHM_FACE_RECOGNITION)
+      #husky.forgot(ALGORITHM_FACE_RECOGNITION)
       #husky.drawRect(ALGORITHM_FACE_RECOGNITION, 0xFF00FF, 100, 101, 200, 201)
       #husky.clearRect(ALGORITHM_FACE_RECOGNITION)
       #husky.drawText(ALGORITHM_FACE_RECOGNITION, 0xFF00FF, 100, 101, "shanghai成都")

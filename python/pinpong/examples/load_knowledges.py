@@ -26,9 +26,13 @@ class ProtocolThread(threading.Thread):
     def run(self):
         while not self.husky.knock():
             time.sleep(0.5)
-        ret = self.husky.loadKnowledges(ALGORITHM_FACE_RECOGNITION,2)
-        logging.info(f"loadKnowledges ret={ret}")
-        time.sleep(20)
+        while True:
+            ret = self.husky.loadKnowledges(ALGORITHM_FACE_RECOGNITION,2)
+            logging.info(f"loadKnowledges 2 ret={ret}")
+            time.sleep(5)
+            ret = self.husky.loadKnowledges(ALGORITHM_FACE_RECOGNITION,0)
+            logging.info(f"loadKnowledges 0 ret={ret}")
+            time.sleep(5)
 
 
 ProtocolThread().start()

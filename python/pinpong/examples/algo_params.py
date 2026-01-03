@@ -26,21 +26,25 @@ class ProtocolThread(threading.Thread):
     def run(self):
         while not self.husky.knock():
             time.sleep(0.5)
+        ret = self.husky.switchAlgorithm(ALGORITHM_TAG_RECOGNITION)
+        logging.info(f"husky.switchAlgorithm(ALGORITHM_TAG_RECOGNITION)={ret}")
+        time.sleep(5)
         while True:
-            ret = self.husky.setAlgorithmParams(ALGORITHM_FACE_RECOGNITION,{"show_name":False, "det_thres":0.5})
-            logging.info(f"set ret={ret}")
-            ret = self.husky.updateAlgoParams(ALGORITHM_FACE_RECOGNITION)
-            logging.info(f"update ret={ret}")
-            params = self.husky.getAlgorithmParams(ALGORITHM_FACE_RECOGNITION,["show_name", "det_thres"])
+            ret = self.husky.setAlgorithmParams(ALGORITHM_TAG_RECOGNITION,{"show_name":False, "dict_type":"36h11"})
+            logging.info(f"husky.setAlgorithmParams(ALGORITHM_TAG_RECOGNITION)={ret}")
+            ret = self.husky.updateAlgoParams(ALGORITHM_TAG_RECOGNITION)
+            logging.info(f"update1 ret={ret}")
+            time.sleep(10)
+            params = self.husky.getAlgorithmParams(ALGORITHM_TAG_RECOGNITION,["show_name", "dict_type"])
             logging.info(f"get params={params}")
-
-            ret = self.husky.setAlgorithmParams(ALGORITHM_FACE_RECOGNITION,{"show_name":True, "det_thres":0.8})
+            time.sleep(10)
+            ret = self.husky.setAlgorithmParams(ALGORITHM_TAG_RECOGNITION,{"show_name":True, "dict_type":"36h10"})
             logging.info(f"set ret={ret}")
-            ret = self.husky.updateAlgoParams(ALGORITHM_FACE_RECOGNITION)
-            logging.info(f"update ret={ret}")
-            params = self.husky.getAlgorithmParams(ALGORITHM_FACE_RECOGNITION,["show_name", "det_thres"])
+            ret = self.husky.updateAlgoParams(ALGORITHM_TAG_RECOGNITION)
+            logging.info(f"update2 ret={ret}")
+            time.sleep(10)
+            params = self.husky.getAlgorithmParams(ALGORITHM_TAG_RECOGNITION,["show_name", "dict_type"])
             logging.info(f"get params={params}")
-
             time.sleep(10)
 
 ProtocolThread().start()

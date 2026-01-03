@@ -27,7 +27,7 @@ class ProtocolThread(threading.Thread):
         while not self.husky.knock():
             time.sleep(0.5)
         while True:
-            ret = self.husky.setNameByID(ALGORITHM_FACE_RECOGNITION,1,"tangyan")
+            ret = self.husky.setNameByID(ALGORITHM_FACE_RECOGNITION,0,"tangyan")
             logging.info(f"setNameByID tangyan ret={ret}")
             time.sleep(5)
             ret = self.husky.setNameByID(ALGORITHM_FACE_RECOGNITION,1,"meinv")

@@ -3,7 +3,6 @@
 #实验效果：学习一次ID
 #接线：使用windows或linux电脑连接一块树，树莓派主控板，哈士奇接到I2C口SCL SDA
 import time
-import tkinter as tk
 from pinpong.board import Board
 from pinpong.libs.dfrobot_huskylensv2 import *
 import threading
@@ -24,12 +23,22 @@ class ProtocolThread(threading.Thread):
         super().__init__()
         self.husky = HuskylensV2_UART(tty_name="/dev/ttySP0", baudrate=115200)
     def run(self):
-        while not self.husky.knock():
-            time.sleep(0.5)
-        while True:
-            ret = self.husky.takeScreenshot()
-            logging.info(f"husky.takeScreenshot ret={ret}")
-            time.sleep(5)
+        ret = self.husky.startRecording(MEDIA_TYPE_AUDIO, 0,"test0.mp3")
+        logging.info(f"husky.startRecording(MEDIA_TYPE_AUDIO, 0,'test0.mp3')={ret}")
+        time.sleep(10)
+        ret = self.husky.stopRecording(MEDIA_TYPE_AUDIO)
+        logging.info(f"husky.stopRecording(MEDIA_TYPE_AUDIO)={ret}")
+        ret = self.husky.playMusic("test0.mp3",100)
+        logging.info(f"husky.playMusic('test0.mp3',100)={ret}")
+        time.sleep(12)
+
+        ret = self.husky.startRecording(MEDIA_TYPE_AUDIO, 5,"test5.mp3")
+        logging.info(f"husky.startRecording(MEDIA_TYPE_AUDIO, 0,'test5.mp3')={ret}")
+        time.sleep(7)
+        ret = self.husky.playMusic("test5.mp3",100)
+        logging.info(f"husky.playMusic('test5.mp3',100)={ret}")
+        time.sleep(7)
+
 
 
 ProtocolThread().start()

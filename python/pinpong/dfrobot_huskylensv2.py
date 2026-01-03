@@ -5,7 +5,7 @@ Only support I2C-connection with  LCD-module.
 Able to draw line, rectangle, circle, pixel, english and chinese text,
 fill_rect, fill_circle, fill screen, etc.
 """
-from pinpong.board import gboard,I2C,UART
+from pinpong.board import gboard, I2C, UART
 import time
 import ctypes
 import queue
@@ -22,7 +22,6 @@ logging.basicConfig(
 LCD_WIDTH = 640
 LCD_HEIGHT = 480
 
-
 RESOLUTION_DEFAULT = 0
 RESOLUTION_640x480 = 1
 RESOLUTION_1280x720 = 2
@@ -30,8 +29,6 @@ RESOLUTION_1920x1080 = 3
 
 MEDIA_TYPE_AUDIO = 1
 MEDIA_TYPE_VIDEO = 2
-
-
 
 COLOR_WHITE = 0xFFFFFF   # 白色
 COLOR_RED = 0xFF0000     # 红色
@@ -50,7 +47,6 @@ COLOR_TEAL = 0x008080    # 蓝绿色
 COLOR_INDIGO = 0x4B0082  # 靛蓝色
 COLOR_MAGENTA = 0xFF00FF # 洋红色
 
-
 HEADER_0_INDEX = 0
 HEADER_1_INDEX = 1
 COMMAND_INDEX = 2
@@ -66,7 +62,6 @@ COMMAND_GET_RESULT_BY_ID = 0x03
 COMMAND_GET_BLOCKS_BY_ID = 0x04
 COMMAND_GET_ARROWS_BY_ID = 0x05
 
-
 COMMAND_SET_ALGORITHM = 0x0A
 COMMAND_SET_NAME_BY_ID = 0x0B
 COMMAND_SET_MULTI_ALGORITHM = 0x0C
@@ -78,7 +73,6 @@ COMMAND_RETURN_ARGS = 0x1A
 COMMAND_RETURN_INFO = 0x1B
 COMMAND_RETURN_BLOCK = 0x1C
 COMMAND_RETURN_ARROW = 0x1D
-
 
 COMMAND_ACTION_TAKE_PHOTO = 0x20
 COMMAND_ACTION_TAKE_SCREENSHOT = 0x21
@@ -205,7 +199,7 @@ class Result(PacketData_t):
         super().__init__(buf)
         self.nameLength = 0
         self.contentLength = 0
-        self.data =  buf
+        self.data = buf
         self.name = ""
         self.content = ""
         self.algo = buf[ALGO_INDEX]
@@ -219,18 +213,18 @@ class Result(PacketData_t):
         
         self.ID = buf[base]
         self.level = buf[base + 1]
-        self.first = read_u16(buf, base+2)
-        self.second = read_u16(buf, base+4)
-        self.third = read_u16(buf, base+6)
-        self.fourth = read_u16(buf, base+8)
+        self.first = read_u16(buf, base + 2)
+        self.second = read_u16(buf, base + 4)
+        self.third = read_u16(buf, base + 6)
+        self.fourth = read_u16(buf, base + 8)
         self.used = False
         
         str_idx = base + 10
         if self.nameLength > 0:
-            self.name = buf[str_idx+1:str_idx+1+self.nameLength].decode("utf-8","")
+            self.name = buf[str_idx + 1:str_idx + 1 + self.nameLength].decode("utf-8", "")
         str_idx += 1 + self.nameLength
         if self.contentLength > 0:
-            self.content = buf[str_idx+1:str_idx+1+self.contentLength].decode("utf-8","")
+            self.content = buf[str_idx + 1:str_idx + 1 + self.contentLength].decode("utf-8", "")
 
 class FaceResult(Result):
     def __init__(self, buf):
@@ -242,7 +236,7 @@ class FaceResult(Result):
             ("lmouth_x", 12), ("lmouth_y", 14),
             ("rmouth_x", 16), ("rmouth_y", 18)
         ]
-        base =CONTENT_INDEX + 12 + self.nameLength + self.contentLength;
+        base = CONTENT_INDEX + 12 + self.nameLength + self.contentLength
         for name, offset in FACE_FIELDS:
             setattr(self, name, read_u16(buf, base + offset))
 
@@ -277,7 +271,7 @@ class HandResult(Result):
             ("pinky_finger_dip_x", 76), ("pinky_finger_dip_y", 78),
             ("pinky_finger_tip_x", 80), ("pinky_finger_tip_y", 82),
         ]
-        base =CONTENT_INDEX + 12 + self.nameLength + self.contentLength;
+        base = CONTENT_INDEX + 12 + self.nameLength + self.contentLength
         for name, offset in HAND_FIELDS:
             setattr(self, name, read_u16(buf, base + offset))
 
@@ -312,34 +306,34 @@ class PoseResult(Result):
 
 class ProtocolV2(object):
     def __init__(self):
-        ERROR_COUNT = 0x05
+        self.ERROR_COUNT = 0x05
         self.FRAME_BUFFER_SIZE = 1024
         self.receive_index = HEADER_0_INDEX
         self.receive_buffer = bytearray(1024)
         self.connect = False
-        self.commandHeader = [0x55,0xAA]
-        self.customId=[None,None,None]
+        self.commandHeader = [0x55, 0xAA]
+        self.customId = [None, None, None]
         self.result = {}
         self.send_buffer = bytearray(512)
-        for i in range(0, 256):
-            self.result[i] = {"algo":i,"info":None,"blocks":[]}
+        for i in range(256):
+            self.result[i] = {"algo": i, "info": None, "blocks": []}
 
-    def toStoreAlgoIndex(self, algo:int):
+    def toStoreAlgoIndex(self, algo: int):
         if algo >= ALGORITHM_CUSTOM_BEGIN:
-            for i in range(0,len(self.customId)):
+            for i in range(len(self.customId)):
                 if self.customId[i] == algo:
                     algo = ALGORITHM_CUSTOM0 + i
-                    break;
+                    break
         return algo
 
-    def print_hex(self,cmd):
+    def print_hex(self, cmd):
         hex_cmd = [hex(x) for x in cmd]
         logging.debug(hex_cmd)
 
-    def checksum(self,cmd):
+    def checksum(self, cmd):
         cs = 0
         for x in cmd:
-            cs = cs + x
+            cs += x
         return cs & 0xff
 
     def knock(self):
@@ -347,44 +341,30 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_uint8(1)
         self.husky_lens_protocol_write_zero_bytes(9)
         self.husky_lens_protocol_write_end()
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
-        return ret;
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        return ret
 
     def getResult(self, algo):
         self.husky_lens_protocol_write_begin(algo, COMMAND_GET_RESULT)
         self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_INFO)
-        if ret == False:
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_INFO)
+        if not ret:
             return None
         if self.receive_index != CONTENT_INDEX + 10:
             return None
         
-        #print("getResult")
-        #self.print_hex(self.receive_buffer[0:self.receive_index+1])
-
-        #if self.receive_buffer[ALGO_INDEX] !=  algo:
-            #读出所有缓存的错误数据
-        #    print(f"self.receive_buffer[ALGO_INDEX]={self.receive_buffer[ALGO_INDEX]} algo={algo}")
-        #    return None
         logging.debug(f"receive_index={self.receive_index}")
         self.result[algo]["info"] = Result(self.receive_buffer[0:self.receive_index+1])
         self.result[algo]["info"].total_arrows = self.result[algo]["info"].total_results - self.result[algo]["info"].total_blocks
         self.result[algo]["info"].total_arrows_learned = self.result[algo]["info"].total_results_learned - self.result[algo]["info"].total_blocks_learned
-        #print("info.maxID",self.result[algo]["info"].maxID)
-        #print("info.total_results",self.result[algo]["info"].total_results)
-        #print("info.total_results_learned",self.result[algo]["info"].total_results_learned)
-        #print("info.total_blocks",self.result[algo]["info"].total_blocks)
-        #print("info.total_blocks_learned",self.result[algo]["info"].total_blocks_learned)
         
         self.result[algo]["blocks"] = []
 
-        for i in range(0,self.result[algo]["info"].total_blocks):
-            ret,_,_ = self.wait(COMMAND_RETURN_BLOCK)
-            if ret == False:
+        for i in range(self.result[algo]["info"].total_blocks):
+            ret, _, _ = self.wait(COMMAND_RETURN_BLOCK)
+            if not ret:
                 return None
-            #algo1 = self.receive_buffer[ALGO_INDEX]
-            #print(f"L:{L},algo:{algo}")
             L = self.receive_buffer[CONTENT_SIZE_INDEX] + PROTOCOL_SIZE
             if algo == ALGORITHM_FACE_RECOGNITION:
                 ret = FaceResult(self.receive_buffer[0:L])
@@ -396,9 +376,9 @@ class ProtocolV2(object):
                 ret = Result(self.receive_buffer[0:L])
             self.result[algo]["blocks"].append(ret)
 
-        for i in range(0, self.result[algo]["info"].total_arrows):
-            ret,_,_ = self.wait(COMMAND_RETURN_ARROW)
-            if ret == False:
+        for i in range(self.result[algo]["info"].total_arrows):
+            ret, _, _ = self.wait(COMMAND_RETURN_ARROW)
+            if not ret:
                 return None
             L = self.receive_buffer[CONTENT_SIZE_INDEX] + PROTOCOL_SIZE
             if algo == ALGORITHM_LINE_TRACKING:
@@ -417,27 +397,27 @@ class ProtocolV2(object):
             if now_ms - start_ms > 8000:
                 break
             c = self._read_from_huskyLens()
-            if c == None:
+            if c is None:
                 time.sleep(0.01)
                 continue
             if self.husky_lens_protocol_receive(c):
                 receiving = False
         if receiving:
-            return False,[],[]
+            return False, [], []
         if command != self.receive_buffer[COMMAND_INDEX]:
             return False, [], []
         retInt = []
         retStr = []
         if command != COMMAND_RETURN_ARGS:
-            return True,[],[]
+            return True, [], []
 
         totalIntArgs = self.receive_buffer[CONTENT_INDEX]
-        contentSize  = self.receive_buffer[CONTENT_SIZE_INDEX]
+        contentSize = self.receive_buffer[CONTENT_SIZE_INDEX]
         contentEnd = CONTENT_INDEX + contentSize
-        retValue = self.receive_buffer[CONTENT_INDEX+1]
+        retValue = self.receive_buffer[CONTENT_INDEX + 1]
         offset = CONTENT_INDEX + 2
         for _ in range(totalIntArgs):
-            v = self.receive_buffer[offset] | (self.receive_buffer[offset+1] << 8)
+            v = self.receive_buffer[offset] | (self.receive_buffer[offset + 1] << 8)
             retInt.append(v)
             offset += 2
 
@@ -458,61 +438,55 @@ class ProtocolV2(object):
             logging.debug(f"s={s}")
             retStr.append(s)
             offset += length
-        return retValue==0,retInt,retStr
+        return retValue == 0, retInt, retStr
 
     def husky_lens_protocol_receive(self, data): 
-        #print("self.receive_index=",self.receive_index, data)
-        if self.receive_index ==  HEADER_0_INDEX:
+        if self.receive_index == HEADER_0_INDEX:
             if data != 0x55:
                 self.receive_index = HEADER_0_INDEX
-                #time.sleep(100)
                 return False
             self.receive_buffer[self.receive_index] = 0x55
-        elif self.receive_index ==  HEADER_1_INDEX:
+        elif self.receive_index == HEADER_1_INDEX:
             if data != 0xaa:
                 self.receive_index = HEADER_0_INDEX
                 return False
             self.receive_buffer[self.receive_index] = 0xaa
-        elif self.receive_index ==  COMMAND_INDEX:
+        elif self.receive_index == COMMAND_INDEX:
             self.receive_buffer[self.receive_index] = data
-        elif self.receive_index ==  ALGO_INDEX:
+        elif self.receive_index == ALGO_INDEX:
             self.receive_buffer[self.receive_index] = data
-        elif self.receive_index ==  CONTENT_SIZE_INDEX:
-            if (self.receive_index >= self.FRAME_BUFFER_SIZE - PROTOCOL_SIZE):
-                self.receive_index = 0;
+        elif self.receive_index == CONTENT_SIZE_INDEX:
+            if self.receive_index >= self.FRAME_BUFFER_SIZE - PROTOCOL_SIZE:
+                self.receive_index = 0
                 return False
             self.receive_buffer[self.receive_index] = data
         else:
             self.receive_buffer[self.receive_index] = data
-            if (self.receive_index == self.receive_buffer[CONTENT_SIZE_INDEX] + CONTENT_INDEX):
+            if self.receive_index == self.receive_buffer[CONTENT_SIZE_INDEX] + CONTENT_INDEX:
                 logging.debug(f"<--------self.receive_index={self.receive_index}")
-                self.print_hex(self.receive_buffer[0:self.receive_index+1])
+                self.print_hex(self.receive_buffer[0:self.receive_index + 1])
                 cs = self.checksum(self.receive_buffer[0:self.receive_index])
-                #print("calc checksum = ", hex(cs))
-                #print("protocol checksum = ", hex(self.receive_buffer[self.receive_index]))
                 return cs == self.receive_buffer[self.receive_index]
-        self.receive_index = self.receive_index + 1
+        self.receive_index += 1
         return False
 
     def available(self, algo):
-        ret = False
-        for i in range(0, len(self.result[algo]["blocks"])):
-            if self.result[algo]["blocks"][i].used == False:
-                ret = True;
-                break;
-        return ret
+        for i in range(len(self.result[algo]["blocks"])):
+            if not self.result[algo]["blocks"][i].used:
+                return True
+        return False
 
     def husky_lens_protocol_write_begin(self, algo, command):
         self.send_buffer = bytearray(512)
-        self.send_buffer[HEADER_0_INDEX] = 0x55;
-        self.send_buffer[HEADER_1_INDEX] = 0xAA;
-        self.send_buffer[COMMAND_INDEX] = command;
-        self.send_buffer[ALGO_INDEX] = algo;
-        self.send_index = CONTENT_INDEX;
+        self.send_buffer[HEADER_0_INDEX] = 0x55
+        self.send_buffer[HEADER_1_INDEX] = 0xAA
+        self.send_buffer[COMMAND_INDEX] = command
+        self.send_buffer[ALGO_INDEX] = algo
+        self.send_index = CONTENT_INDEX
 
     def husky_lens_protocol_write_uint8(self, content):
         self.send_buffer[self.send_index] = content
-        self.send_index = self.send_index + 1
+        self.send_index += 1
 
     def husky_lens_protocol_write_zero_bytes(self, count):
         end = self.send_index + count
@@ -527,35 +501,26 @@ class ProtocolV2(object):
         self.send_index = end
         
     def husky_lens_protocol_write_int16(self, content):
-        self.send_buffer[self.send_index] = content&0xFF
-        self.send_buffer[self.send_index+1] = (content>>8)&0xFF
-        self.send_index = self.send_index + 2
+        self.send_buffer[self.send_index] = content & 0xFF
+        self.send_buffer[self.send_index + 1] = (content >> 8) & 0xFF
+        self.send_index += 2
 
     def husky_lens_protocol_write_int32(self, content):
-        self.send_buffer[self.send_index] = content&0xFF
-        self.send_buffer[self.send_index+1] = (content>>8)&0xFF
-        self.send_buffer[self.send_index+2] = (content>>16)&0xFF
-        self.send_buffer[self.send_index+3] = (content>>24)&0xFF
-        self.send_index = self.send_index + 4
+        self.send_buffer[self.send_index] = content & 0xFF
+        self.send_buffer[self.send_index + 1] = (content >> 8) & 0xFF
+        self.send_buffer[self.send_index + 2] = (content >> 16) & 0xFF
+        self.send_buffer[self.send_index + 3] = (content >> 24) & 0xFF
+        self.send_index += 4
 
     def husky_lens_protocol_write_end(self):
         self.send_buffer[CONTENT_SIZE_INDEX] = self.send_index - CONTENT_INDEX
         cs = 0
-        for i in range(0, self.send_index):
-            cs = cs + self.send_buffer[i]
+        for i in range(self.send_index):
+            cs += self.send_buffer[i]
         self.send_buffer[self.send_index] = cs & 0xFF
-        self.send_index = self.send_index + 1
-
-    '''
-    def getResultByID(self, algo, ID):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_GET_RESULT)
-        self.husky_lens_protocol_write_end()
-        
-        self._write_to_huskyLens(self.send_buffer[0, self.send_index])
-        return self.wait(COMMAND_RETURN_ARGS)
-    '''
-    def learnBlock(self, algo, x,  y, width, height):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN_BLOCK);
+        self.send_index += 1
+    def learnBlock(self, algo, x, y, width, height):
+        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN_BLOCK)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_int16(x)
@@ -563,29 +528,30 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(width)
         self.husky_lens_protocol_write_int16(height)
         self.husky_lens_protocol_write_end()
-        ret,argInt,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, argInt, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         if not ret:
             return 0
         return argInt[0] if argInt else 0
         
-    def switchAlgorithm(self,algo):
-        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM);
-        self.husky_lens_protocol_write_uint8(algo);
-        self.husky_lens_protocol_write_zero_bytes(9);
-        self.husky_lens_protocol_write_end();
+    def switchAlgorithm(self, algo):
+        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_ALGORITHM)
+        self.husky_lens_protocol_write_uint8(algo)
+        self.husky_lens_protocol_write_zero_bytes(9)
+        self.husky_lens_protocol_write_end()
       
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def takePhoto(self,resolution):
-        resolutions = {"default":RESOLUTION_DEFAULT, "640x480":RESOLUTION_640x480, "1280x720":RESOLUTION_1280x720, "1920x1080":RESOLUTION_1920x1080}
+    def takePhoto(self, resolution):
+        resolutions = {"default": RESOLUTION_1280x720, "640x480": RESOLUTION_640x480, 
+                       "1280x720": RESOLUTION_1280x720, "1920x1080": RESOLUTION_1920x1080}
         if resolution not in resolutions:
             return ""
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_PHOTO)
         self.husky_lens_protocol_write_uint8(resolutions[resolution])
         self.husky_lens_protocol_write_zero_bytes(9)
         self.husky_lens_protocol_write_end()
-        ret,_,argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         if not ret:
             return ""
         return argStr[0] if argStr else ""
@@ -593,27 +559,27 @@ class ProtocolV2(object):
     def takeScreenshot(self):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_TAKE_SCREENSHOT)
         self.husky_lens_protocol_write_end()
-        ret,_,argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         if not ret:
             return ""
         return argStr[0] if argStr else ""
 
-    def learn(self,algo):
+    def learn(self, algo):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LEARN)
         self.husky_lens_protocol_write_end()
-        ret,argInt,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, argInt, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         if not ret:
             return 0
         return argInt[0] if argInt else 0
 
-    def forget(self,algo):
+    def forget(self, algo):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_FORGET)
         self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def drawRect(self, color:int, lineWidth:int, x:int, y:int, width:int, height:int):
+    def drawRect(self, color: int, lineWidth: int, x: int, y: int, width: int, height: int):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_DRAW_RECT)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_uint8(lineWidth)
@@ -623,13 +589,12 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(height)
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_int32(color)
-        self.husky_lens_protocol_write_end();
-        self.husky_lens_protocol_write_end();
+        self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def drawUniqueRect(self, color:int, lineWidth:int, x:int, y:int, width:int, height:int):
+    def drawUniqueRect(self, color: int, lineWidth: int, x: int, y: int, width: int, height: int):
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_DRAW_UNIQUE_RECT)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_uint8(lineWidth)
@@ -639,10 +604,9 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_int16(height)
         self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_int32(color)
-        self.husky_lens_protocol_write_end();
-        self.husky_lens_protocol_write_end();
+        self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
     def clearRect(self):
@@ -652,11 +616,10 @@ class ProtocolV2(object):
         ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def drawText(self, color : int, fontSize : int, x : int, y : int, text : str):
-        utf8_bytes = text.encode('utf-8')
-        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_DRAW_TEXT);
-        self.husky_lens_protocol_write_uint8(0);
-        self.husky_lens_protocol_write_uint8(fontSize);
+    def drawText(self, color: int, fontSize: int, x: int, y: int, text: str):
+        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_DRAW_TEXT)
+        self.husky_lens_protocol_write_uint8(0)
+        self.husky_lens_protocol_write_uint8(fontSize)
         
         self.husky_lens_protocol_write_int16(x)
         self.husky_lens_protocol_write_int16(y)
@@ -665,38 +628,38 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_string(text)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_int32(color)
-        self.husky_lens_protocol_write_end();
+        self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
         
     def clearText(self):
-        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_CLEAR_TEXT);
+        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_CLEAR_TEXT)
         self.husky_lens_protocol_write_end()
         
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def saveKnowledges(self, algo : int, knowledgeID : int):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_SAVE_KNOWLEDGES);
-        self.husky_lens_protocol_write_uint8(knowledgeID);
+    def saveKnowledges(self, algo: int, knowledgeID: int):
+        self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_SAVE_KNOWLEDGES)
+        self.husky_lens_protocol_write_uint8(knowledgeID)
         self.husky_lens_protocol_write_zero_bytes(9)
         self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def loadKnowledges(self, algo : int, knowledgeID : int):
+    def loadKnowledges(self, algo: int, knowledgeID: int):
         self.husky_lens_protocol_write_begin(algo, COMMAND_ACTION_LOAD_KNOWLEDGES)
-        self.husky_lens_protocol_write_uint8(knowledgeID);
+        self.husky_lens_protocol_write_uint8(knowledgeID)
         self.husky_lens_protocol_write_zero_bytes(9)
         self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def playMusic(self, name:str, volume:int):
-        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_PLAY_MUSIC);
+    def playMusic(self, name: str, volume: int):
+        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_ACTION_PLAY_MUSIC)
         self.husky_lens_protocol_write_zero_bytes(2)
      
         self.husky_lens_protocol_write_int16(volume)
@@ -704,43 +667,43 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_string(name)
         self.husky_lens_protocol_write_end()
       
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def setNameByID(self, algo : int, ID : int, name: str):
-        self.husky_lens_protocol_write_begin(algo, COMMAND_SET_NAME_BY_ID);
+    def setNameByID(self, algo: int, ID: int, name: str):
+        self.husky_lens_protocol_write_begin(algo, COMMAND_SET_NAME_BY_ID)
         self.husky_lens_protocol_write_uint8(ID)
         self.husky_lens_protocol_write_zero_bytes(9)
         self.husky_lens_protocol_write_string(name)
         self.husky_lens_protocol_write_end()
         
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def setMultiAlgorithm(self, algos:list):
+    def setMultiAlgorithm(self, algos: list):
         if len(algos) > 3 or len(algos) < 2:
             return False
-        customAlgoNum = 0;
-        self.customId = [None,None,None]
+        customAlgoNum = 0
+        self.customId = [None, None, None]
         for algo in algos:
             if algo >= ALGORITHM_CUSTOM_BEGIN:
                 self.customId[customAlgoNum] = algo
-                customAlgoNum = + customAlgoNum + 1
+                customAlgoNum += 1
 
-        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM);
+        self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM)
         self.husky_lens_protocol_write_uint8(len(algos))
         self.husky_lens_protocol_write_uint8(0)
 
         for algo in algos:
             self.husky_lens_protocol_write_int16(algo)
-        for _ in range(0, 4-len(algos)):
+        for _ in range(4 - len(algos)):
             self.husky_lens_protocol_write_int16(0)
         self.husky_lens_protocol_write_end()
 
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def setMultiAlgorithmRatio(self,ratios : list):
+    def setMultiAlgorithmRatio(self, ratios: list):
         if len(ratios) > 3 or len(ratios) < 2:
             return False
         self.husky_lens_protocol_write_begin(ALGORITHM_ANY, COMMAND_SET_MULTI_ALGORITHM_RATIO)
@@ -749,42 +712,44 @@ class ProtocolV2(object):
 
         for ratio in ratios:
             self.husky_lens_protocol_write_int16(ratio)
-        for _ in range(0, 4-len(ratios)):
+        for _ in range(4 - len(ratios)):
             self.husky_lens_protocol_write_int16(0xFFFF)
 
         self.husky_lens_protocol_write_end()
         
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def setAlgorithmParams(self,algo, params={"show_name":False}):
+    def setAlgorithmParams(self, algo, params=None):
+        if params is None:
+            params = {"show_name": False}
         for k, v in params.items():
             self.husky_lens_protocol_write_begin(algo, COMMAND_SET_ALGO_PARAMS)
            
             if isinstance(v, bool):
-                self.husky_lens_protocol_write_uint8(1);
-                self.husky_lens_protocol_write_uint8(0);
-                self.husky_lens_protocol_write_int16(v);
+                self.husky_lens_protocol_write_uint8(1)
+                self.husky_lens_protocol_write_uint8(0)
+                self.husky_lens_protocol_write_int16(v)
                 self.husky_lens_protocol_write_zero_bytes(6)
-                self.husky_lens_protocol_write_string(k);
+                self.husky_lens_protocol_write_string(k)
             elif isinstance(v, float):
                 float_bytes = struct.pack("<f", v)
                 v0, v1 = struct.unpack("<hh", float_bytes)
-                self.husky_lens_protocol_write_uint8(2);
-                self.husky_lens_protocol_write_uint8(0);
-                self.husky_lens_protocol_write_int16(v0);
-                self.husky_lens_protocol_write_int16(v1);
+                self.husky_lens_protocol_write_uint8(2)
+                self.husky_lens_protocol_write_uint8(0)
+                self.husky_lens_protocol_write_int16(v0)
+                self.husky_lens_protocol_write_int16(v1)
                 self.husky_lens_protocol_write_zero_bytes(4)
-                self.husky_lens_protocol_write_string(k);
+                self.husky_lens_protocol_write_string(k)
             elif isinstance(v, str):
                 self.husky_lens_protocol_write_zero_bytes(10)
-                self.husky_lens_protocol_write_string(k);
-                self.husky_lens_protocol_write_string(v);
+                self.husky_lens_protocol_write_string(k)
+                self.husky_lens_protocol_write_string(v)
             else:
                 logging.error(f"unknown type key={k} value={v}")
                 return False
             self.husky_lens_protocol_write_end()
-            ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+            ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
             if not ret:
                 return False
         return True
@@ -796,18 +761,18 @@ class ProtocolV2(object):
         return ret
 
     def getAlgorithmParams(self, algo, param_keys):
-        params={}
+        params = {}
         for k in param_keys:
-            self.husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM);
+            self.husky_lens_protocol_write_begin(algo, COMMAND_GET_ALGO_PARAM)
             self.husky_lens_protocol_write_zero_bytes(10)
-            self.husky_lens_protocol_write_string(k);
-            self.husky_lens_protocol_write_end();
-            ret,argInt,argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+            self.husky_lens_protocol_write_string(k)
+            self.husky_lens_protocol_write_end()
+            ret, argInt, argStr = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
             logging.debug(f"argInt={argInt},argStr={argStr}")
             if ret:
                 if len(argInt) == 1:
-                    params[k]= argInt[0]==1
-                if len(argInt) == 2:
+                    params[k] = argInt[0] == 1
+                elif len(argInt) == 2:
                     # 把两个 int16 拼成 4 字节
                     v0 = argInt[0] - 0x10000 if argInt[0] > 0x7FFF else argInt[0]
                     v1 = argInt[1] - 0x10000 if argInt[1] > 0x7FFF else argInt[1]
@@ -816,11 +781,11 @@ class ProtocolV2(object):
                     value = struct.unpack("<f", float_bytes)[0]
                     params[k] = round(value, 1)
                 if argStr:
-                    params[k]=argStr[0]
+                    params[k] = argStr[0]
         return params
 
-    def startRecording(self, mediaType : int, duration : int, filename:str="",resolution : int=RESOLUTION_DEFAULT):
-        self.husky_lens_protocol_write_begin(0, COMMAND_ACTION_START_RECORDING);
+    def startRecording(self, mediaType: int, duration: int, filename: str = "", resolution: int = RESOLUTION_DEFAULT):
+        self.husky_lens_protocol_write_begin(0, COMMAND_ACTION_START_RECORDING)
         self.husky_lens_protocol_write_uint8(resolution)
         self.husky_lens_protocol_write_uint8(mediaType)
         self.husky_lens_protocol_write_int16(duration)
@@ -828,55 +793,52 @@ class ProtocolV2(object):
         self.husky_lens_protocol_write_string(filename)
         self.husky_lens_protocol_write_end()
         
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-    def stopRecording(self, mediaType : int):
-        self.husky_lens_protocol_write_begin(0, COMMAND_ACTION_STOP_RECORDING);
+    def stopRecording(self, mediaType: int):
+        self.husky_lens_protocol_write_begin(0, COMMAND_ACTION_STOP_RECORDING)
         self.husky_lens_protocol_write_uint8(0)
         self.husky_lens_protocol_write_uint8(mediaType)
         self.husky_lens_protocol_write_zero_bytes(8)
         self.husky_lens_protocol_write_end()
         
-        ret,_,_ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
+        ret, _, _ = self.executeCommand(wait_cmd=COMMAND_RETURN_ARGS)
         return ret
 
-
     def executeCommand(self, wait_cmd):
-        for _ in range(0,3):
+        for _ in range(3):
             self._write_to_huskyLens()
-            ret,retInt,retStr = self.wait(wait_cmd)
-            return ret,retInt,retStr
+            ret, retInt, retStr = self.wait(wait_cmd)
+            if ret:
+                return ret, retInt, retStr
         # 重试 3 次后仍未成功
-        return False,[],[]
+        return False, [], []
 
 class HuskylensV2(ProtocolV2):
     def __init__(self):
         super().__init__()
     
     def begin(self):
-        if self.knock():
-            return True
-        else:
-            return False
+        return self.knock()
         
     def popCachedResult(self, algo):
-        for i in range(0,len(self.result[algo]["blocks"])):
+        for i in range(len(self.result[algo]["blocks"])):
             if self.result[algo]["blocks"][i].used:
-                continue;
-            self.result[algo]["blocks"][i].used = True;
-            return self.result[algo]["blocks"][i];
+                continue
+            self.result[algo]["blocks"][i].used = True
+            return self.result[algo]["blocks"][i]
         return None
 
     def getCachedCenterResult(self, algo):
-        centerIndex = -1;
-        minLen = 0x0FFFFFFF;
-        for i in range(0,len(self.result[algo]["blocks"])):
-            length = math.pow(self.result[algo]["blocks"][i].xCenter - LCD_WIDTH / 2,2) + \
-                          math.pow(self.result[algo]["blocks"][i].yCenter - LCD_HEIGHT / 2,2);
+        centerIndex = -1
+        minLen = 0x0FFFFFFF
+        for i in range(len(self.result[algo]["blocks"])):
+            length = math.pow(self.result[algo]["blocks"][i].xCenter - LCD_WIDTH / 2, 2) + \
+                     math.pow(self.result[algo]["blocks"][i].yCenter - LCD_HEIGHT / 2, 2)
             if length < minLen:
                 minLen = length
-                centerIndex = i;
+                centerIndex = i
         if centerIndex != -1:
             return self.result[algo]["blocks"][centerIndex]
         return None
@@ -888,7 +850,7 @@ class HuskylensV2(ProtocolV2):
 
     def getCachedResultByID(self, algo, ID):
         logging.debug(f"len(self.result[algo][blocks])={len(self.result[algo]['blocks'])}")
-        for i in range(0,len(self.result[algo]["blocks"])):
+        for i in range(len(self.result[algo]["blocks"])):
             if self.result[algo]["blocks"][i].ID == ID:
                 return self.result[algo]["blocks"][i]
         return None
@@ -898,31 +860,31 @@ class HuskylensV2(ProtocolV2):
 
     def getCachedResultLearnedNum(self, algo):
         count = 0
-        for i in range(0,len(self.result[algo]["blocks"])):
+        for i in range(len(self.result[algo]["blocks"])):
             if self.result[algo]["blocks"][i].ID != 0:
-              count = count + 1
+                count += 1
         return count
     
     def getCachedResultNumByID(self, algo, ID):
         count = 0
-        for i in range(0,len(self.result[algo]["blocks"])):
+        for i in range(len(self.result[algo]["blocks"])):
             if ID == self.result[algo]["blocks"][i].ID:
-                count = count + 1
+                count += 1
         return count
 
-    def getCachedIndexResultByID(self, algo:int, ID:int, index:int):
+    def getCachedIndexResultByID(self, algo: int, ID: int, index: int):
         logging.debug(f"len(self.result[algo][blocks]={len(self.result[algo]['blocks'])}")
         _index = 0
-        for i in range(0,len(self.result[algo]["blocks"])):
-          logging.debug(f"i={i} ID={self.result[algo]['blocks'][i].ID}")
-          if ID == self.result[algo]["blocks"][i].ID:
-            if index == _index:
-              logging.debug(f"index={index}  i={i}")
-              return self.result[algo]["blocks"][i]
-            _index = _index + 1
+        for i in range(len(self.result[algo]["blocks"])):
+            logging.debug(f"i={i} ID={self.result[algo]['blocks'][i].ID}")
+            if ID == self.result[algo]["blocks"][i].ID:
+                if index == _index:
+                    logging.debug(f"index={index}  i={i}")
+                    return self.result[algo]["blocks"][i]
+                _index += 1
         return None
 
-    def getCachedResultMaxID(self,algo:int):
+    def getCachedResultMaxID(self, algo: int):
         return self.result[algo]["info"].maxID
 
     def getCurrentBranch(self, algo: int, attr: str):
@@ -934,8 +896,8 @@ class HuskylensV2(ProtocolV2):
             return getattr(blocks[0], attr, 0)
         return 0
 
-    def getUpcomingBranchCount(self, algo:int):
-        count =  len(self.result[algo]["blocks"]) - 1
+    def getUpcomingBranchCount(self, algo: int):
+        count = len(self.result[algo]["blocks"]) - 1
         if count < 0:
             count = 0
         return count
@@ -945,13 +907,12 @@ class HuskylensV2(ProtocolV2):
         if len(blocks) - 1 - index > 0:
             return getattr(blocks[1 + index], attr, 0)
         return 0
+
     def createResult(self):
-        return Result([0]*16)
+        return Result([0] * 16)
 class HuskylensV2_I2C(HuskylensV2):
-    def __init__(self, board = None, bus_num=0):
-        if isinstance(board, int):
-            board = gboard
-        elif board is None:
+    def __init__(self, board=None, bus_num=0):
+        if isinstance(board, int) or board is None:
             board = gboard
         self._connect = 0
         self.board = board
@@ -959,6 +920,9 @@ class HuskylensV2_I2C(HuskylensV2):
         self.i2c_addr = 0x50
         self.q = queue.Queue()
         super().__init__()
+
+    def _error_handling(self):
+        self._connect += 1
 
     def _write_to_huskyLens(self):
         self._connect = 0
@@ -981,20 +945,25 @@ class HuskylensV2_I2C(HuskylensV2):
             d = self.i2c.readfrom(self.i2c_addr, 32)
             for c in d:
                 self.q.put(c)
+        if self.q.empty():
+            return None
         return self.q.get()
 
 class HuskylensV2_UART(HuskylensV2):
-    def __init__(self,board = None, tty_name="/dev/ttyS0", baudrate=115200, debug_level=logging.INFO):
+    def __init__(self, board=None, tty_name="/dev/ttyS0", baudrate=115200, debug_level=logging.INFO):
         logging.getLogger().setLevel(debug_level)
         if isinstance(board, str):
-            tty_name  = board
-            board     = gboard
+            tty_name = board
+            board = gboard
         elif board is None:
-            board    = gboard
+            board = gboard
         self.q = queue.Queue()
-        self.uart  = UART(tty_name=tty_name)
-        self.uart.init(baud_rate = baudrate, bits=8, parity=0, stop = 1) 
+        self.uart = UART(tty_name=tty_name)
+        self.uart.init(baud_rate=baudrate, bits=8, parity=0, stop=1) 
         super().__init__()
+
+    def _error_handling(self):
+        self._connect += 1
   
     def _write_to_huskyLens(self):
         self._connect = 0

@@ -115,19 +115,23 @@ class ProtocolThread(threading.Thread):
 
   def run(self):
     while True:
-      husky = HuskylensV2_UART(tty_name="/dev/ttySP0",debug_level=logging.INFO)
-      husky.knock()
-      while True:
-        husky.getResult(ALGORITHM_HAND_RECOGNITION)
-        root.after(0, draw_result, None)
-        result = husky.getCachedCenterResult(ALGORITHM_HAND_RECOGNITION)
-        
-        if result:
-            print(f"index_finger_tip{result.index_finger_tip_x,result.index_finger_tip_y}")
-            pass
-        else:
-            print(None)
-        root.after(0, draw_result, result)
+        husky = HuskylensV2_UART(tty_name="/dev/ttySP0",baudrate=115200, debug_level=logging.INFO)
+        while not husky.knock():
+            time.sleep(3)
+        husky.switchAlgorithm(ALGORITHM_HAND_RECOGNITION)
+        time.sleep(5)
+        while True:
+            husky.getResult(ALGORITHM_HAND_RECOGNITION)
+            if husky.available(ALGORITHM_HAND_RECOGNITION):
+                result = husky.popCachedResult(ALGORITHM_HAND_RECOGNITION)
+                if result:
+                    print("result.ID=", result.ID)
+                    print("result.name=", result.name)
+                    print(f"result.Center={result.xCenter, result.yCenter}")
+                    root.after(0, draw_result, None)
+                    print(f"result.Center={result.xCenter, result.yCenter}")
+                    root.after(0, draw_result, result)
+                    time.sleep(0.1)
 
 ProtocolThread().start()
 root.mainloop()

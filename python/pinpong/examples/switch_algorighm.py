@@ -22,15 +22,22 @@ Board("UNIHIKER").begin()  #初始化
 class ProtocolThread(threading.Thread):
     def __init__(self):
         super().__init__()
-        self.husky = HuskylensV2_UART(tty_name="/dev/ttySP0", baudrate=115200)
+        self.husky = HuskylensV2_UART(tty_name="/dev/ttySP0", baudrate=115200,debug_level=logging.INFO)
     def run(self):
         while not self.husky.knock():
             time.sleep(0.5)
         while True:
-            ret = self.husky.takeScreenshot()
-            logging.info(f"husky.takeScreenshot ret={ret}")
-            time.sleep(5)
+            ret = self.husky.switchAlgorithm(ALGORITHM_FACE_RECOGNITION)
+            logging.info(f"self.husky.switchAlgorithm(ALGORITHM_FACE_RECOGNITION)={ret}")
+            time.sleep(10)
+            
+            ret = self.husky.switchAlgorithm(ALGORITHM_SEGMENT)
+            logging.info(f"self.husky.switchAlgorithm(ALGORITHM_SEGMENT)={ret}")
+            time.sleep(10)
 
+            ret = self.husky.switchAlgorithm(128)
+            logging.info(f"self.husky.switchAlgorithm(128)={ret}")
+            time.sleep(10)
 
 ProtocolThread().start()
 while True:

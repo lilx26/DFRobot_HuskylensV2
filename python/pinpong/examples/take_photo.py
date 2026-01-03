@@ -27,6 +27,10 @@ class ProtocolThread(threading.Thread):
         while not self.husky.knock():
             time.sleep(0.5)
         while True:
+            ret = self.husky.takePhoto("default")
+            logging.info(f"takePhoto default ret={ret}")
+            time.sleep(5)
+            
             ret = self.husky.takePhoto("640x480")
             logging.info(f"takePhoto 640x480 ret={ret}")
             time.sleep(5)

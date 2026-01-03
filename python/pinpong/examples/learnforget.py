@@ -26,6 +26,9 @@ class ProtocolThread(threading.Thread):
     def run(self):
         while not self.husky.knock():
             time.sleep(0.5)
+        ret = self.husky.switchAlgorithm(ALGORITHM_FACE_RECOGNITION)
+        logging.info(f"husky.switchAlgorithm(ALGORITHM_FACE_RECOGNITION)={ret}")
+        time.sleep(5)
         while True:
             _id = self.husky.learn(ALGORITHM_FACE_RECOGNITION)
             logging.info(f"learn id={_id}")
