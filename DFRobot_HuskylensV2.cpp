@@ -47,6 +47,7 @@ int8_t HuskylensV2::getResult(eAlgorithm_t algo) {
     // DBG(i);
     // DBG((long long)ProtocolV2::result[i]);
     result[algo][i] = ProtocolV2::result[i];
+    // result[_algo][i] = ProtocolV2::result[i]; // 这里可能有风险
     ProtocolV2::result[i] = NULL;
   }
   return count;

@@ -17,7 +17,7 @@ public:
   bool protocolAvailable();
   bool wait(uint8_t command = 0);
   bool knock(void);
-  int8_t getResult(eAlgorithm_t algo);
+  int8_t getResult(eAlgorithm_t &algo);
   uint8_t learn(eAlgorithm_t algo);
   uint8_t learnBlock(eAlgorithm_t algo, int16_t x, int16_t y, int16_t width,
                      int16_t height);

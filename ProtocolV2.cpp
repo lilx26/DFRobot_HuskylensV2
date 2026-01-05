@@ -291,7 +291,7 @@ bool ProtocolV2::switchAlgorithm(eAlgorithm_t algo) {
 
 // get result ,获取所有result，将统计信息保存heap中
 // 返回result的数目
-int8_t ProtocolV2::getResult(eAlgorithm_t algo) {
+int8_t ProtocolV2::getResult(eAlgorithm_t &algo) {
   DBG("\n");
   uint8_t *buffer = husky_lens_protocol_write_begin(algo, COMMAND_GET_RESULT);
   int length = husky_lens_protocol_write_end();
@@ -303,6 +303,7 @@ int8_t ProtocolV2::getResult(eAlgorithm_t algo) {
     protocolWrite(buffer, length);
     if (wait(COMMAND_RETURN_INFO)) {
       PacketData_t *packet = (PacketData_t *)head->data;
+      // algo = (eAlgorithm_t)head->algo_id;
       maxID = packet->maxID;
       info.total_results = packet->total_results;
       info.total_results_learned = packet->total_results_learned;

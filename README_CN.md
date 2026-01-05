@@ -73,7 +73,7 @@ bool switchAlgorithm(eAlgorithm_t algo);
  * @param algo 要获取结果的算法
  * @return 成功返回COMMAND_RETURN_ARGS，retValue==0，其他值表示错误
  */
-int8_t getResult(eAlgorithm_t algo);
+int8_t getResult(eAlgorithm_t &algo);
 
 /**
  * @fn available
