@@ -355,23 +355,8 @@ int8_t ProtocolV2::getResult(eAlgorithm_t &algo) {
     DBG("\n");
     if (wait(COMMAND_RETURN_ARROW)) {
       _count++;
-#ifdef LARGE_MEMORY
-      if (algo == ALGORITHM_FACE_RECOGNITION) {
-        DBG("new Face Result\n");
-        result[i] = new FaceResult((const void *)receive_buffer);
-      } else if (algo == ALGORITHM_HAND_RECOGNITION) {
-        DBG("new Hand Result\n");
-        result[i] = new HandResult((const void *)receive_buffer);
-      } else if (algo == ALGORITHM_POSE_RECOGNITION) {
-        DBG("new Pose Result\n");
-        result[i] = new PoseResult((const void *)receive_buffer);
-      } else {
-        DBG("new Result\n");
-        result[i] = new Result((const void *)receive_buffer);
-      }
-#else
       result[i] = new Result(receive_buffer);
-#endif
+      Serial.printf("result[%d].ID=%d\n", i, result[i]->ID);
     }
   }
   DBG("ProtocolV2 return");

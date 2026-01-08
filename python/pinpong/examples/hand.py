@@ -7,6 +7,7 @@ import tkinter as tk
 from pinpong.board import Board
 from pinpong.libs.dfrobot_huskylensv2 import *
 import threading
+import logging
 
 Board("UNIHIKER").begin()  #初始化
 
@@ -18,21 +19,51 @@ root.geometry("640x480")  # 设置窗口大小
 canvas = tk.Canvas(root, width=640, height=480, bg='white')
 canvas.pack()
 
-def draw_result(result):
+def draw_results(results):
+    """绘制多个手部识别结果"""
     # 工具函数：画点
     def draw_point(x, y, color="black", label=None):
         r = 3
+        if x == 0 and y == 0:
+            return
         canvas.create_oval(x-r, y-r, x+r, y+r, fill=color, outline=color)
         if label:
             canvas.create_text(x, y-10, text=label, fill=color)
 
     # 工具函数：画骨架线
     def draw_line(p1, p2, color="blue"):
+        if p1[0] == 0 and p1[1] == 0:
+            return
+        if p2[0] == 0 and p2[1] == 0:
+            return
         canvas.create_line(p1[0], p1[1], p2[0], p2[1], fill=color, width=2)
-    if result:
+    
+    # 先清空画布
+    canvas.delete("all")
+    
+    if not results:
+        return
+    
+    # 为每只手使用不同的颜色
+    colors = ["red", "blue", "green", "orange", "purple", "brown"]
+    
+    # 遍历所有手部进行绘制
+    for _, result in enumerate(results):
+        if not result:
+            continue
+        
+        # 选择颜色（根据ID）
+        color = colors[result.ID % len(colors)]
+        
+        # 绘制手部框（如果有的话）
+        if hasattr(result, 'xCenter') and hasattr(result, 'yCenter') and hasattr(result, 'width') and hasattr(result, 'height'):
+            canvas.create_rectangle(result.xCenter-result.width//2, result.yCenter-result.height//2, 
+                                   result.xCenter+result.width//2, result.yCenter+result.height//2, 
+                                   outline=color, width=2)
+        
         # ========== 手腕 ==========
         wrist = (result.wrist_x, result.wrist_y)
-        draw_point(*wrist, color="red", label="wrist")
+        draw_point(*wrist, color=color, label="wrist")
         
         # ========== 拇指 ==========
         thumb_cmc = (result.thumb_cmc_x, result.thumb_cmc_y)
@@ -105,8 +136,15 @@ def draw_result(result):
         draw_line(pinky_mcp, pinky_pip)
         draw_line(pinky_pip, pinky_dip)
         draw_line(pinky_dip, pinky_tip)
-    else:
-        canvas.delete("all")
+        
+        # 显示ID和名称信息
+        if hasattr(result, 'xCenter') and hasattr(result, 'yCenter'):
+            info_text = f"ID: {result.ID}"
+            if hasattr(result, 'name') and result.name:
+                info_text += f"\nName: {result.name}"
+            canvas.create_text(result.xCenter, result.yCenter - 20, 
+                              text=info_text, fill=color, font=("Arial", 10, "bold"),
+                              anchor="s")
 
 class ProtocolThread(threading.Thread):
   def __init__(self):
@@ -122,16 +160,19 @@ class ProtocolThread(threading.Thread):
         time.sleep(5)
         while True:
             husky.getResult(ALGORITHM_HAND_RECOGNITION)
-            if husky.available(ALGORITHM_HAND_RECOGNITION):
+            # 收集所有手部识别结果
+            results = []
+            while husky.available(ALGORITHM_HAND_RECOGNITION):
                 result = husky.popCachedResult(ALGORITHM_HAND_RECOGNITION)
                 if result:
+                    results.append(result)
                     print("result.ID=", result.ID)
                     print("result.name=", result.name)
                     print(f"result.Center={result.xCenter, result.yCenter}")
-                    root.after(0, draw_result, None)
-                    print(f"result.Center={result.xCenter, result.yCenter}")
-                    root.after(0, draw_result, result)
-                    time.sleep(0.1)
+
+            # 一次性绘制所有手部识别结果
+            root.after(0, draw_results, results)
+            time.sleep(0.1)  # 控制刷新频率
 
 ProtocolThread().start()
 root.mainloop()
