@@ -33,7 +33,7 @@ int8_t HuskylensV2::getResult(eAlgorithm_t algo) {
 #else
   algo = (eAlgorithm_t)0;
 #endif
-
+  DBG_KV("algo", algo);
   for (uint8_t i = 0; i < MAX_RESULT_NUM; i++) {
     if (result[algo][i]) {
       delete result[algo][i];
@@ -44,30 +44,34 @@ int8_t HuskylensV2::getResult(eAlgorithm_t algo) {
   int8_t count = ProtocolV2::getResult(_algo);
 
   for (uint8_t i = 0; i < MAX_RESULT_NUM; i++) {
-    // DBG(i);
-    // DBG((long long)ProtocolV2::result[i]);
+    DBG((long long)ProtocolV2::result[i]);
     result[algo][i] = ProtocolV2::result[i];
     // result[_algo][i] = ProtocolV2::result[i]; // 这里可能有风险
     ProtocolV2::result[i] = NULL;
+    DBG(i);
+    DBG_KV("algo", algo);
+    DBG((long long)result[algo][i]);
   }
   return count;
 }
 
 bool HuskylensV2::available(eAlgorithm_t algo) {
+  DBG("\n");
   bool ret = false;
 #ifdef LARGE_MEMORY
   algo = toRealID(algo);
 #else
   algo = (eAlgorithm_t)0;
 #endif
-
   for (uint8_t i = 0; i < MAX_RESULT_NUM; i++) {
-    if (result[algo][i] != NULL)
+    if (result[algo][i] != NULL) {
+      DBG_KV("result[algo][i]->used=", result[algo][i]->used);
       if (!result[algo][i]->used) {
         DBG(i);
         ret = true;
         break;
       }
+    }
   }
 
   return ret;
@@ -101,12 +105,14 @@ Result *HuskylensV2::popCachedResult(eAlgorithm_t algo) {
 eAlgorithm_t HuskylensV2::toRealID(uint8_t id) {
   eAlgorithm_t algo = (eAlgorithm_t)id;
   if (id >= ALGORITHM_CUSTOM_BEGIN) {
-    for (uint8_t i = 0; i < CUSTOM_ALGORITHM_COUNT; i++)
+    for (uint8_t i = 0; i < CUSTOM_ALGORITHM_COUNT; i++) {
       if (customId[i] == id) {
         algo = (eAlgorithm_t)((int)ALGORITHM_CUSTOM0 + i);
         break;
       }
+    }
   }
+  DBG_KV("read algo ", algo);
   return algo;
 }
 #endif
@@ -305,8 +311,8 @@ bool HuskylensV2::switchAlgorithm(eAlgorithm_t algo) {
 #ifdef LARGE_MEMORY
   if (ret) {
     if (algo >= ALGORITHM_CUSTOM_BEGIN) {
-      customAlgoNum = 1;
-      customId[customAlgoNum++] = algo;
+      customAlgoNum = 0;
+      customId[customAlgoNum] = algo;
     }
   }
 #endif
