@@ -44,13 +44,11 @@ int8_t HuskylensV2::getResult(eAlgorithm_t algo) {
   int8_t count = ProtocolV2::getResult(_algo);
 
   for (uint8_t i = 0; i < MAX_RESULT_NUM; i++) {
-    DBG((long long)ProtocolV2::result[i]);
     result[algo][i] = ProtocolV2::result[i];
     // result[_algo][i] = ProtocolV2::result[i]; // 这里可能有风险
     ProtocolV2::result[i] = NULL;
     DBG(i);
     DBG_KV("algo", algo);
-    DBG((long long)result[algo][i]);
   }
   return count;
 }
