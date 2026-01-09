@@ -356,7 +356,6 @@ int8_t ProtocolV2::getResult(eAlgorithm_t &algo) {
     if (wait(COMMAND_RETURN_ARROW)) {
       _count++;
       result[i] = new Result(receive_buffer);
-      Serial.printf("result[%d].ID=%d\n", i, result[i]->ID);
     }
   }
   DBG("ProtocolV2 return");
