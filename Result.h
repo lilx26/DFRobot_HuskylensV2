@@ -153,10 +153,15 @@ typedef enum {
   ALGORITHM_BARCODE_RECOGNITION,          // 17
   ALGORITHM_QRCODE_RECOGNITION,           // 18
   ALGORITHM_FALLDOWN_RECOGNITION,         // 19
-  ALGORITHM_CUSTOM0,                      // 20
-  ALGORITHM_CUSTOM1,                      // 21
-  ALGORITHM_CUSTOM2,                      // 22
-  ALGORITHM_BUILTIN_COUNT,                // 23
+  ALGORITHM_BUILTIN_RFU0,                 // 20
+  ALGORITHM_BUILTIN_RFU1,                 // 21
+  ALGORITHM_BUILTIN_RFU2,                 // 22
+  ALGORITHM_BUILTIN_RFU3,                 // 23
+  ALGORITHM_BUILTIN_RFU4,                 // 24
+  ALGORITHM_CUSTOM0,                      // 25
+  ALGORITHM_CUSTOM1,                      // 26
+  ALGORITHM_CUSTOM2,                      // 27
+  ALGORITHM_BUILTIN_COUNT,                // 28
 
   ALGORITHM_CUSTOM_BEGIN = 128, // 128
 
