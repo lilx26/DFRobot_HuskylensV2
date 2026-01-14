@@ -144,7 +144,7 @@ class ProtocolThread(threading.Thread):
                         print("result.name=", result.name)
                         print(f"result.Center={result.xCenter, result.yCenter}")
                         print(f"result.nose=({result.nose_x, result.nose_y})")
-
+                
                 # 一次性绘制所有人体姿态
                 root.after(0, draw_results, results)
                 time.sleep(0.1)  # 控制刷新频率

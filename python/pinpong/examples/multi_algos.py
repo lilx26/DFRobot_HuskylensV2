@@ -26,33 +26,34 @@ class ProtocolThread(threading.Thread):
     def run(self):
         while not self.husky.knock():
             time.sleep(0.5)
-            ret = self.husky.setMultiAlgorithms([ALGORITHM_FACE_RECOGNITION,
-                ALGORITHM_OBJECT_RECOGNITION,ALGORITHM_POSE_RECOGNITION])
-            logging.info(f"setMultiAlgorithms ret={ret}")
-            time.sleep(5)
+
+        ret = self.husky.setMultiAlgorithm([ALGORITHM_FACE_RECOGNITION,
+            ALGORITHM_OBJECT_RECOGNITION,ALGORITHM_POSE_RECOGNITION])
+        logging.info(f"setMultiAlgorithms ret={ret}")
+        time.sleep(5)
 
         while True:           
-            ret = self.husky.setMultiAlgorithmRatios([1,1,1])
+            ret = self.husky.setMultiAlgorithmRatio([1,1,1])
             logging.info(f"setMultiAlgorithmRatios111 ret={ret}")
             time.sleep(5)
             
-            ret = self.husky.setMultiAlgorithmRatios([0,1,1])
+            ret = self.husky.setMultiAlgorithmRatio([0,1,1])
             logging.info(f"setMultiAlgorithmRatios011 ret={ret}")
             time.sleep(5)
 
-            ret = self.husky.setMultiAlgorithmRatios([1,1,0])
+            ret = self.husky.setMultiAlgorithmRatio([1,1,0])
             logging.info(f"setMultiAlgorithmRatios110 ret={ret}")
             time.sleep(5)
             
-            ret = self.husky.setMultiAlgorithmRatios([1,0,0])
+            ret = self.husky.setMultiAlgorithmRatio([1,0,0])
             logging.info(f"setMultiAlgorithmRatios100 ret={ret}")
             time.sleep(5)
 
-            ret = self.husky.setMultiAlgorithmRatios([0,1,0])
+            ret = self.husky.setMultiAlgorithmRatio([0,1,0])
             logging.info(f"setMultiAlgorithmRatios010 ret={ret}")
             time.sleep(5)
 
-            ret = self.husky.setMultiAlgorithmRatios([0,0,1])
+            ret = self.husky.setMultiAlgorithmRatio([0,0,1])
             logging.info(f"setMultiAlgorithmRatios001 ret={ret}")
             time.sleep(10)
 

@@ -28,10 +28,10 @@ class ProtocolThread(threading.Thread):
             time.sleep(0.5)
         while True:
             ret = self.husky.playMusic("abc.mp3",50)
-            logging.info(f"playMusic abc.mp3 50 ret={ret}")
+            logging.info(f"playMusic ret={ret}")
             time.sleep(15)
             ret = self.husky.playMusic("abc.mp3",1000)
-            logging.info(f"playMusic abc.mp3 1000 ret={ret}")
+            logging.info(f"playMusic ret={ret}")
             time.sleep(15)
             ret = self.husky.playMusic("abcd.mp3",100)
             logging.info(f"playMusic ret={ret}")

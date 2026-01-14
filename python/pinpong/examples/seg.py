@@ -20,7 +20,7 @@ Board("UNIHIKER").begin()  #初始化
 
 # 创建主窗口
 root = tk.Tk()
-root.title("面部特征绘制")
+root.title("分割图像绘制")
 root.geometry("640x480")  # 设置窗口大小
 # 创建画布
 canvas = tk.Canvas(root, width=640, height=480, bg='white')

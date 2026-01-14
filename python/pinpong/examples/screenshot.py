@@ -28,7 +28,7 @@ class ProtocolThread(threading.Thread):
             time.sleep(0.5)
         while True:
             ret = self.husky.takeScreenshot()
-            logging.info(f"husky.takeScreenshot ret={ret}")
+            logging.info(f"takeScreenshotret={ret}")
             time.sleep(5)
 
 
