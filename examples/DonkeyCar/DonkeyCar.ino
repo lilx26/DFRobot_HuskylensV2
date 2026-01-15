@@ -2,12 +2,13 @@
  HUSKYLENS V2 An Easy-to-use AI Machine Vision Sensor
  <https://www.dfrobot.com/product-1922.html>
 
+ This example demonstrates the face recognition functionality of HUSKYLENS V2
+ via I2C interface. It shows how to initialize the sensor, detect human faces,
+ and print detailed information including face ID, center coordinates,
+ dimensions, name, content, and the positions of facial features (left eye,
+ right eye, nose, left mouth, right mouth) using a helper macro for consistent
+ output.
  ***************************************************
- This example demonstrates how to record video with HUSKYLENS
- V2 via I2C interface. The code initializes the device and shows how to use
- startRecording() and stopRecording() functions to record video files with
- different durations.
-
  Created 2025-07-04
  By [Ouki Wang](ouki.wang@dfrobot.com)
 
@@ -25,7 +26,7 @@
 
 #include "DFRobot_HuskylensV2.h"
 
-// HUSKYLENS green line >> SDA; blue line >> SCL
+// HUSKYLENS green line >> SDA/TX; blue line >> SCL/RX
 HuskylensV2 huskylens;
 
 void setup() {
@@ -39,21 +40,25 @@ void setup() {
     Serial.println(F("\tgreen line >> SDA/TX; blue line >> SCL/RX"));
     delay(100);
   }
-  bool ret = huskylens.switchAlgorithm((eAlgorithm_t)(128));
+  huskylens.switchAlgorithm(ALGORITHM_DONKEYCAR);
   delay(5000);
 }
 
 void loop() {
-  ret = huskylens.startRecording(MEDIA_TYPE_VIDEO, 0, "test5s.mp4");
-  Serial.print("startRecording test5s.mp4 ret=");
-  Serial.println(ret);
-  delay(5000);
-
-  ret = huskylens.stopRecording(MEDIA_TYPE_VIDEO);
-  Serial.print("stopRecording ret=");
-  Serial.println(ret);
-  delay(5000);
-  while (1) {
+  while (!huskylens.getResult(ALGORITHM_DONKEYCAR)) {
     delay(100);
   }
+
+  while (huskylens.available(ALGORITHM_DONKEYCAR)) {
+    Result *result = huskylens.popCachedResult(ALGORITHM_DONKEYCAR);
+
+    Serial.print("result->ID=");
+    Serial.println(result->ID);
+
+    Serial.print("result->steering=");
+    Serial.println(result->steering);
+    Serial.print("result->throttle=");
+    Serial.println(result->throttle);
+  }
+  delay(1000);
 }

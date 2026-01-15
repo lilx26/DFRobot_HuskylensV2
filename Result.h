@@ -153,11 +153,11 @@ typedef enum {
   ALGORITHM_BARCODE_RECOGNITION,          // 17
   ALGORITHM_QRCODE_RECOGNITION,           // 18
   ALGORITHM_FALLDOWN_RECOGNITION,         // 19
-  ALGORITHM_BUILTIN_RFU0,                 // 20
-  ALGORITHM_BUILTIN_RFU1,                 // 21
-  ALGORITHM_BUILTIN_RFU2,                 // 22
-  ALGORITHM_BUILTIN_RFU3,                 // 23
-  ALGORITHM_BUILTIN_RFU4,                 // 24
+  ALGORITHM_DEPTH_CAMERA,                 // 20
+  ALGORITHM_DONKEYCAR,                    // 21
+  ALGORITHM_CAMERA,                       // 22
+  ALGORITHM_RFU3,                         // 23
+  ALGORITHM_RFU4,                         // 24
   ALGORITHM_CUSTOM0,                      // 25
   ALGORITHM_CUSTOM1,                      // 26
   ALGORITHM_CUSTOM2,                      // 27
@@ -255,13 +255,15 @@ typedef struct __attribute__((packed)) {
     int16_t angle;
     int16_t azimuth;
     int16_t total_blocks;
-    int16_t roll; // eular[2], 沿X轴移动， 横滚角,前后移动
+    int16_t roll;     // eular[2], 沿X轴移动， 横滚角,前后移动
+    int16_t steering; // 转向角度
   };
   union {
     int16_t fourth;
     int16_t height;
     int16_t length;
     int16_t total_blocks_learned;
+    int16_t throttle; // 油门
   };
   int8_t payload[0];
 } PacketData_t;
