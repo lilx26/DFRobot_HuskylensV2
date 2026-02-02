@@ -59,10 +59,12 @@
 #define FRAME_BUFFER_SIZE 512
 #define MAX_RESULT_NUM 10
 #define CMD_BUFFER_SIZE 512
+#define MAX_PL_LEN 64
 #else
 #define FRAME_BUFFER_SIZE 128
 #define MAX_RESULT_NUM 6
 #define CMD_BUFFER_SIZE 64
+#define MAX_PL_LEN 32
 #endif
 
 #define LCD_WIDTH 640

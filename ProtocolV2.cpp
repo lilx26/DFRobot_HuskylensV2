@@ -191,9 +191,19 @@ void ProtocolV2::protocolWrite(uint8_t *buffer, int length) {
     DBG_PRINT("\n");
     timeOutDuration = 5000;
     wire->setClock(100000);
-    wire->beginTransmission(0x50);
-    wire->write(buffer, length);
-    wire->endTransmission();
+    uint16_t packets = length / MAX_PL_LEN;
+    uint16_t remain = length % MAX_PL_LEN;
+    for(uint16_t i = 0; i < packets; i++){
+        wire->beginTransmission(0x50);
+        wire->write(buffer + i * MAX_PL_LEN, MAX_PL_LEN);
+        wire->endTransmission();
+    }
+    if(remain){
+        wire->beginTransmission(0x50);
+        wire->write(buffer + packets * MAX_PL_LEN, remain);
+        wire->endTransmission();
+    }
+
   } else if (stream) {
     DBG_PRINTLN("-->");
     DBG_HEX_ARRAY(buffer, length);
@@ -223,6 +233,7 @@ bool ProtocolV2::protocolAvailable() {
   } else if (stream) {
     while (stream->available()) {
       uint8_t c = stream->read();
+    //   DBG(c, HEX);
       if (husky_lens_protocol_receive(c)) {
         DBG("full packet\n");
         return true;
