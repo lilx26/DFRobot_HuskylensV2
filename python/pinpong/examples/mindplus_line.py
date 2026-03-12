@@ -2,11 +2,14 @@
 
 #实验效果：学习一次ID
 #接线：使用windows或linux电脑连接一块树，树莓派主控板，哈士奇接到I2C口SCL SDA
+import sys
 import time
 import tkinter as tk
 from pinpong.board import Board
-from pinpong.libs.dfrobot_huskylensv2 import *
 import threading
+
+sys.path.append("..")
+from dfrobot_huskylensv2 import *
 
 Board("RPI").begin()  #初始化
 

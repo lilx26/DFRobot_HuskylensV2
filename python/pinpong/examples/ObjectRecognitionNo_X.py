@@ -11,10 +11,9 @@
   @date       2025-10-28
   @url https://github.com/DFRobot/DFRobot_HuskylensV2
 '''
-
-from pinpong.board import Board
 import sys
-import os
+from pinpong.board import Board
+
 sys.path.append("../")
 from dfrobot_huskylensv2 import *
 
