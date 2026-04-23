@@ -17,9 +17,6 @@ import os
 sys.path.append("../")
 from dfrobot_huskylensv2 import *
 
-Board("rpi").begin()#Comment this line when using UNIHIKER M10
-Board().begin()
-
 huskylens = HuskylensV2_I2C() #Comment this line to disable I2C mode
 #huskylens = HuskylensV2_UART(tty_name="/dev/ttySP0", baudrate=115200) #Uncomment this line to use UART mode
 huskylens.knock()
